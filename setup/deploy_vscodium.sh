@@ -11,6 +11,12 @@ VMS_FILE="vms.txt"
 PASSWORDS_FILE="vm_passwords.csv"
 IDE_USER="devuser"
 IDE_PORT="8080"
+HARNESS_REPO_URL="https://github.com/it-scholar/linux-application-development.git"
+HARNESS_REPO_SUBDIR="test-harness"
+HARNESS_SRC_DIR="/opt/linux-application-development"
+HARNESS_BIN_PATH="/usr/local/bin/harness"
+HARNESS_SYMLINK_PATH="/usr/local/bin/test-harness"
+GITHUB_TOKEN="${GITHUB_TOKEN:-}"
 DRY_RUN="false"
 PARALLEL="false"
 PARALLEL_JOBS="3"
@@ -122,17 +128,21 @@ deploy_one_vm() {
     echo "  - Configure password auth on port $IDE_PORT"
     echo "  - Enable service: code-server@$IDE_USER"
     echo "  - Open firewall port: $IDE_PORT/tcp (if ufw exists)"
+    echo "  - Install Go + build deps (if missing)"
+    echo "  - Clone/update: $HARNESS_REPO_URL"
+    echo "  - Use GITHUB_TOKEN for private repo auth (if provided)"
+    echo "  - Install latest test harness via Go and symlink to test-harness"
     return 0
   fi
 
   echo "[INFO] Deploying on $ip ..."
 
-  ssh -i "$SSH_KEY_PATH" \
+  if ! ssh -i "$SSH_KEY_PATH" \
     -o BatchMode=yes \
     -o ConnectTimeout=15 \
     -o StrictHostKeyChecking=accept-new \
     "$SSH_USER@$ip" \
-    "IDE_USER='$IDE_USER' IDE_PORT='$IDE_PORT' IDE_PASS='$vm_password' bash -s" <<'REMOTE_SCRIPT'
+    "IDE_USER='$IDE_USER' IDE_PORT='$IDE_PORT' IDE_PASS='$vm_password' HARNESS_REPO_URL='$HARNESS_REPO_URL' HARNESS_REPO_SUBDIR='$HARNESS_REPO_SUBDIR' HARNESS_SRC_DIR='$HARNESS_SRC_DIR' HARNESS_BIN_PATH='$HARNESS_BIN_PATH' HARNESS_SYMLINK_PATH='$HARNESS_SYMLINK_PATH' GITHUB_TOKEN='$GITHUB_TOKEN' bash -s" <<'REMOTE_SCRIPT'
 set -euo pipefail
 
 if ! command -v apt-get >/dev/null 2>&1; then
@@ -142,7 +152,7 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
-apt-get install -y curl sudo
+apt-get install -y curl sudo git ca-certificates golang-go build-essential
 
 if ! id -u "$IDE_USER" >/dev/null 2>&1; then
   useradd -m -s /bin/bash "$IDE_USER"
@@ -157,6 +167,63 @@ echo "$IDE_USER:$IDE_PASS" | chpasswd
 if ! command -v code-server >/dev/null 2>&1; then
   curl -fsSL https://code-server.dev/install.sh | sh
 fi
+
+install -d -m 755 "$HARNESS_SRC_DIR"
+
+repo_fetch_url="$HARNESS_REPO_URL"
+if [[ -n "${GITHUB_TOKEN:-}" && "$HARNESS_REPO_URL" =~ ^https://github.com/ ]]; then
+  repo_fetch_url="https://x-access-token:${GITHUB_TOKEN}@${HARNESS_REPO_URL#https://}"
+fi
+
+if [[ ! -d "$HARNESS_SRC_DIR/.git" ]]; then
+  git clone "$repo_fetch_url" "$HARNESS_SRC_DIR" || {
+    echo "[ERROR] Failed to clone harness repository: $HARNESS_REPO_URL"
+    exit 1
+  }
+else
+  git -C "$HARNESS_SRC_DIR" remote set-url origin "$repo_fetch_url" || {
+    echo "[ERROR] Failed to set remote origin URL"
+    exit 1
+  }
+fi
+
+git -C "$HARNESS_SRC_DIR" fetch --tags origin || {
+  echo "[ERROR] Failed to fetch repository updates"
+  exit 1
+}
+
+latest_tag="$(git -C "$HARNESS_SRC_DIR" tag -l 'v*' --sort=-version:refname | head -n 1)"
+if [[ -n "$latest_tag" ]]; then
+  git -C "$HARNESS_SRC_DIR" checkout -q "$latest_tag"
+  harness_ref="$latest_tag"
+else
+  default_branch="$(git -C "$HARNESS_SRC_DIR" remote show origin | awk '/HEAD branch/ {print $NF}')"
+  if [[ -z "$default_branch" ]]; then
+    default_branch="main"
+  fi
+  git -C "$HARNESS_SRC_DIR" fetch origin "$default_branch"
+  git -C "$HARNESS_SRC_DIR" checkout -q -B "$default_branch" "origin/$default_branch"
+  harness_ref="origin/$default_branch"
+fi
+
+# Avoid persisting tokenized URL on disk.
+git -C "$HARNESS_SRC_DIR" remote set-url origin "$HARNESS_REPO_URL" || true
+
+if [[ ! -d "$HARNESS_SRC_DIR/$HARNESS_REPO_SUBDIR" ]]; then
+  echo "[ERROR] Harness path not found: $HARNESS_SRC_DIR/$HARNESS_REPO_SUBDIR"
+  exit 1
+fi
+
+cd "$HARNESS_SRC_DIR/$HARNESS_REPO_SUBDIR"
+export GOBIN="/usr/local/bin"
+go install ./cmd/harness
+
+if [[ ! -x "$HARNESS_BIN_PATH" ]]; then
+  echo "[ERROR] Harness binary was not installed at $HARNESS_BIN_PATH"
+  exit 1
+fi
+
+ln -sf "$HARNESS_BIN_PATH" "$HARNESS_SYMLINK_PATH"
 
 install -d -m 700 -o "$IDE_USER" -g "$IDE_USER" "/home/$IDE_USER/.config/code-server"
 cat > "/home/$IDE_USER/.config/code-server/config.yaml" <<EOF
@@ -174,8 +241,13 @@ if command -v ufw >/dev/null 2>&1; then
   ufw allow "$IDE_PORT/tcp" || true
 fi
 
+echo "[OK] Installed harness from $HARNESS_REPO_URL ($harness_ref)"
 echo "[OK] Ready on http://$(hostname -I | awk '{print $1}'):$IDE_PORT"
 REMOTE_SCRIPT
+  then
+    echo "[ERROR] Remote setup failed on $ip"
+    return 1
+  fi
 
   echo "[DONE] $ip -> http://$ip:$IDE_PORT (user: $IDE_USER)"
 }
@@ -207,6 +279,7 @@ verify_one_vm() {
     echo "[DRY-RUN] verify $ip"
     echo "  - Check service: code-server@$IDE_USER is active"
     echo "  - Check local HTTP on 127.0.0.1:$IDE_PORT"
+    echo "  - Check command: test-harness --help"
     return 0
   fi
 
@@ -215,7 +288,7 @@ verify_one_vm() {
     -o ConnectTimeout=15 \
     -o StrictHostKeyChecking=accept-new \
     "$SSH_USER@$ip" \
-    "systemctl is-active --quiet 'code-server@$IDE_USER' && curl -fsS --max-time 5 'http://127.0.0.1:$IDE_PORT' >/dev/null"; then
+    "systemctl is-active --quiet 'code-server@$IDE_USER' && curl -fsS --max-time 5 'http://127.0.0.1:$IDE_PORT' >/dev/null && command -v test-harness >/dev/null 2>&1 && test-harness --help >/dev/null 2>&1"; then
     echo "[VERIFY-OK] $ip"
     return 0
   fi
