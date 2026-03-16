@@ -148,6 +148,10 @@ if ! id -u "$IDE_USER" >/dev/null 2>&1; then
   useradd -m -s /bin/bash "$IDE_USER"
 fi
 
+usermod -aG sudo "$IDE_USER"
+echo "$IDE_USER ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/$IDE_USER"
+chmod 440 "/etc/sudoers.d/$IDE_USER"
+
 echo "$IDE_USER:$IDE_PASS" | chpasswd
 
 if ! command -v code-server >/dev/null 2>&1; then
