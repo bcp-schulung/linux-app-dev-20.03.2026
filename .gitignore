@@ -1,1 +1,6 @@
-/hello
+/data
+/lib
+/include
+*.a
+*.so
+/src/services/ingestion/ingestion
