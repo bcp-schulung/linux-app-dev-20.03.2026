@@ -4,27 +4,27 @@
 # ── Retrieve commands ────────────────────────────────────────────────────────
 
 # Germany
-test-harness/bin/test-harness retrieve --country de --output ./data/csv
+harness retrieve --country de --output ./data/csv
 
 # France
-test-harness/bin/test-harness retrieve --country fr --output ./data/csv
+harness retrieve --country fr --output ./data/csv
 
 # Taiwan  (NOTE: NOAA uses FIPS code CH for Taiwan stations)
-test-harness/bin/test-harness retrieve --country tw --output ./data/csv
+harness retrieve --country tw --output ./data/csv
 
 # Poland
-test-harness/bin/test-harness retrieve --country pl --output ./data/csv
+harness retrieve --country pl --output ./data/csv
 
 # Mexico
-test-harness/bin/test-harness retrieve --country mx --output ./data/csv
+harness retrieve --country mx --output ./data/csv
 
 # Finland
-test-harness/bin/test-harness retrieve --country fi --output ./data/csv
+harness retrieve --country fi --output ./data/csv
 
 # ── Run all countries in parallel ────────────────────────────────────────────
 
 for code in de fr tw pl mx fi; do
-  test-harness/bin/test-harness retrieve --country $code --output ./data/csv &
+  harness retrieve --country $code --output ./data/csv &
 done
 wait
 
