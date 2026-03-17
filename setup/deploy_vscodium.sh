@@ -124,10 +124,12 @@ deploy_one_vm() {
     echo "[DRY-RUN] $ip"
     echo "  - SSH as $SSH_USER using key $SSH_KEY_PATH"
     echo "  - Create/update user: $IDE_USER"
+    echo "  - Install Docker Engine + containerd + buildx + compose plugin"
+    echo "  - Add $IDE_USER to the docker group"
     echo "  - Install code-server if missing"
     echo "  - Configure password auth on port $IDE_PORT"
     echo "  - Enable service: code-server@$IDE_USER"
-    echo "  - Open firewall port: $IDE_PORT/tcp (if ufw exists)"
+    echo "  - Open firewall ports: $IDE_PORT/tcp (if ufw exists)"
     echo "  - Install Go + build deps (if missing)"
     echo "  - Clone/update: $HARNESS_REPO_URL"
     echo "  - Use GITHUB_TOKEN for private repo auth (if provided)"
@@ -152,13 +154,39 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
-apt-get install -y curl sudo git ca-certificates golang-go build-essential
+apt-get install -y curl sudo git ca-certificates gnupg lsb-release golang-go build-essential
 
+# ── Docker Engine ────────────────────────────────────────────────────────────
+if ! command -v docker >/dev/null 2>&1; then
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+    | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  chmod a+r /etc/apt/keyrings/docker.gpg
+
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu \
+$(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+    | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+  apt-get update -y
+  apt-get install -y \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin
+fi
+
+systemctl enable --now docker
+
+# ── IDE user ─────────────────────────────────────────────────────────────────
 if ! id -u "$IDE_USER" >/dev/null 2>&1; then
   useradd -m -s /bin/bash "$IDE_USER"
 fi
 
 usermod -aG sudo "$IDE_USER"
+usermod -aG docker "$IDE_USER"
 echo "$IDE_USER ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/$IDE_USER"
 chmod 440 "/etc/sudoers.d/$IDE_USER"
 
