@@ -1,0 +1,39 @@
+# Weather Station Data Retrieval Commands
+# Run from: /Users/bencoeppicus/Documents/linux-application-development
+
+# ── Retrieve commands ────────────────────────────────────────────────────────
+
+# Germany
+test-harness/bin/test-harness retrieve --country de --output ./data/csv
+
+# France
+test-harness/bin/test-harness retrieve --country fr --output ./data/csv
+
+# Taiwan  (NOTE: NOAA uses FIPS code CH for Taiwan stations)
+test-harness/bin/test-harness retrieve --country tw --output ./data/csv
+
+# Poland
+test-harness/bin/test-harness retrieve --country pl --output ./data/csv
+
+# Mexico
+test-harness/bin/test-harness retrieve --country mx --output ./data/csv
+
+# Finland
+test-harness/bin/test-harness retrieve --country fi --output ./data/csv
+
+# ── Run all countries in parallel ────────────────────────────────────────────
+
+for code in de fr tw pl mx fi; do
+  test-harness/bin/test-harness retrieve --country $code --output ./data/csv &
+done
+wait
+
+# ── Copy CSV files into the ingestion container ──────────────────────────────
+# Copies everything in ./data/csv/ into the container's watched directory.
+# The ingestion service picks up new .csv files every 60 seconds.
+
+docker cp ./data/csv/. weather-station-ingestion:/data/csv/
+
+# ── Verify ingestion loaded the data ─────────────────────────────────────────
+
+docker exec weather-station-ingestion wget -qO- http://127.0.0.1:8080/api/v1/stats
