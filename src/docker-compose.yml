@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  # Ingestion Service
+  ingestion:
+    build:
+      context: .
+      dockerfile: services/ingestion/Dockerfile
+    container_name: weather-station-ingestion
+    volumes:
+      - ingestion-data:/data
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: ["CMD", "sh", "-c", "test -f /tmp/ingestion.pid && kill -0 $(cat /tmp/ingestion.pid)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - weather-station
+    restart: unless-stopped
+
+  # Aggregation Service
+  aggregation:
+    build:
+      context: .
+      dockerfile: services/aggregation/Dockerfile
+    container_name: weather-station-aggregation
+    volumes:
+      - aggregation-data:/data
+    environment:
+      - LOG_LEVEL=info
+    depends_on:
+      ingestion:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "sh", "-c", "test -f /tmp/aggregation.pid && kill -0 $(cat /tmp/aggregation.pid)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - weather-station
+    restart: unless-stopped
+
+  # Query Service
+  query:
+    build:
+      context: .
+      dockerfile: services/query/Dockerfile
+    container_name: weather-station-query
+    ports:
+      - "8081:8080"
+    volumes:
+      - aggregation-data:/data:ro
+    environment:
+      - LOG_LEVEL=info
+    depends_on:
+      aggregation:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - weather-station
+    restart: unless-stopped
+
+  # Discovery Service
+  discovery:
+    build:
+      context: .
+      dockerfile: services/discovery/Dockerfile
+    container_name: weather-station-discovery
+    ports:
+      - "9000:9000/udp"
+    environment:
+      - LOG_LEVEL=info
+    networks:
+      - weather-station
+    restart: unless-stopped
+
+  # Test Harness
+  test-harness:
+    build:
+      context: .
+      dockerfile: test-harness/Dockerfile
+    container_name: weather-station-test-harness
+    volumes:
+      - test-results:/data
+    environment:
+      - INGESTION_URL=http://ingestion:8080
+      - AGGREGATION_URL=http://aggregation:8080
+      - QUERY_URL=http://query:8080
+      - DISCOVERY_URL=http://discovery:9000
+    depends_on:
+      ingestion:
+        condition: service_healthy
+      aggregation:
+        condition: service_healthy
+      query:
+        condition: service_healthy
+      discovery:
+        condition: service_started
+    command: ["ci", "--verbose", "--fail-threshold", "80"]
+    networks:
+      - weather-station
+    profiles:
+      - test
+
+volumes:
+  ingestion-data:
+    driver: local
+  aggregation-data:
+    driver: local
+  query-data:
+    driver: local
+  test-results:
+    driver: local
+
+networks:
+  weather-station:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
