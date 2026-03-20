@@ -697,7 +697,9 @@ static void collect_picks(const game_data_t *data, const selection_state_t *sel,
 static int shuffle_word_list(game_data_t *data) {
     if (!data || data->total_words <= 0) return -1;
     
-    int *indices = malloc(data->total_words * sizeof(int));
+    /* BUG: off-by-one — allocates one int too few; Electric Fence catches the
+     * out-of-bounds write when shuffle() accesses indices[total_words - 1]. */
+    int *indices = malloc((data->total_words - 1) * sizeof(int));
     if (!indices) {
         perror("malloc");
         return -1;
