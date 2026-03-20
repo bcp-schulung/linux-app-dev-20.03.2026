@@ -1,0 +1,29 @@
+flowchart TD
+    A[Race Condition Example] --> B["int counter = 0"]
+    
+    B --> C[Thread 1: counter++]
+    B --> D[Thread 2: counter++]
+    
+    C --> C1["Read counter 0"]
+    C1 --> C2["Add 1"]
+    C2 --> C3["Write 1"]
+    
+    D --> D1["Read counter 0"]
+    D1 --> D2["Add 1"]
+    D2 --> D3["Write 1"]
+    
+    C3 --> E["Expected: 2"]
+    D3 --> E
+    E --> F["Actual: 1 WRONG!"]
+    
+    G[Solution: Mutex] --> H["pthread_mutex_lock(&m)"]
+    H --> I["counter++"]
+    I --> J["pthread_mutex_unlock(&m)"]
+    J --> K[Correct: 2]
+    
+    L[Atomic Operations] --> M["__atomic_add_fetch(&counter, 1, __ATOMIC_SEQ_CST)"]
+    M --> N[Lock-free, correct: 2]
+    
+    style F fill:#ffe1e1
+    style K fill:#e8f5e8
+    style N fill:#d4edda

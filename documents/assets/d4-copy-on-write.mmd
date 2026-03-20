@@ -1,0 +1,28 @@
+graph TB
+    A[Copy-on-Write COW] --> B[fork called]
+    B --> C[Kernel duplicates page tables]
+    C --> D[Mark all pages read-only]
+    D --> E[Parent and child share physical pages]
+    
+    E --> F{Write to page?}
+    F -->|No| G[Continue sharing - efficient!]
+    F -->|Yes| H[Page fault triggered]
+    
+    H --> I[Kernel copies page]
+    I --> J[Update page table]
+    J --> K[Mark new page writable]
+    K --> L[Resume execution]
+    
+    M[Benefits] --> M1[Fast fork ~1ms]
+    M --> M2[Low memory overhead]
+    M --> M3[Ideal for fork+exec]
+    
+    N[Example] --> N1["fork() - instant"]
+    N1 --> N2[Parent modifies variable]
+    N2 --> N3[Page fault + copy]
+    N1 --> N4[Child never writes]
+    N4 --> N5[Pages remain shared]
+    
+    style E fill:#e8f5e8
+    style G fill:#d4edda
+    style I fill:#fff4e1

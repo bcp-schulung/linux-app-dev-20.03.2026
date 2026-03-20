@@ -1,0 +1,35 @@
+graph LR
+    A[Threading vs Processes] --> B[Threads]
+    A --> C[Processes]
+    
+    B --> B1[Pros]
+    B --> B2[Cons]
+    
+    B1 --> B1A[Fast creation ~10 µs]
+    B1 --> B1B[Low memory overhead]
+    B1 --> B1C[Easy shared memory]
+    B1 --> B1D[Fast context switch]
+    
+    B2 --> B2A[No isolation - one crash kills all]
+    B2 --> B2B[Race conditions]
+    B2 --> B2C[Complex debugging]
+    B2 --> B2D[GIL in some languages]
+    
+    C --> C1[Pros]
+    C --> C2[Cons]
+    
+    C1 --> C1A[Isolation - crash contained]
+    C1 --> C1B[No shared memory races]
+    C1 --> C1C[Easier debugging]
+    C1 --> C1D[Multi-core without GIL]
+    
+    C2 --> C2A[Slow creation ~1 ms]
+    C2 --> C2B[High memory COW]
+    C2 --> C2C[IPC complexity]
+    C2 --> C2D[Slower context switch]
+    
+    D[When to Use] --> E[Threads: I/O bound, shared state]
+    D --> F[Processes: CPU bound, isolation needed]
+    
+    style B1 fill:#e8f5e8
+    style C1 fill:#e1f5ff

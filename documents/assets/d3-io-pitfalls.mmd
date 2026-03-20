@@ -1,0 +1,30 @@
+graph TB
+    A[Common I/O Pitfalls] --> B[Not checking return values]
+    A --> C[Partial reads/writes]
+    A --> D[Race conditions]
+    A --> E[File descriptor leaks]
+    A --> F[Buffer overflows]
+    
+    B --> B1["fd = open(), // Should check fd != -1"]
+    
+    C --> C1["read() may return less than requested"]
+    C --> C2[Must loop until all data read]
+    C --> C3["write() may write partially"]
+    
+    D --> D1[TOCTOU: Time-of-check-time-of-use]
+    D --> D2["if (access(file, W_OK)) // race!,   fd = open(file) // unsafe"]
+    D --> D3[Use openat with O_CREAT|O_EXCL]
+    
+    E --> E1[Forgetting close on error paths]
+    E --> E2["if (error) return -1 // leak!"]
+    E --> E3[Use goto cleanup pattern]
+    
+    F --> F1["read(fd, buf, sizeof(buf))"]
+    F --> F2["strcpy(dest, src) // no bounds"]
+    F --> F3[Use bounded functions]
+    
+    style B fill:#ffe1e1
+    style C fill:#fff4e1
+    style D fill:#ffe1e1
+    style E fill:#fff4e1
+    style F fill:#ffe1e1

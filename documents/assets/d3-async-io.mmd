@@ -1,0 +1,35 @@
+sequenceDiagram
+    participant App as Application
+    participant Kernel
+    participant Disk
+    
+    rect rgb(255, 240, 240)
+        Note over App,Disk: Synchronous I/O (Blocking)
+        App->>Kernel: read(fd, buf, size)
+        Note over App: Process blocks
+        Kernel->>Disk: Issue read
+        Disk-->>Kernel: Data ready
+        Kernel-->>App: Return data
+        Note over App: Process continues
+    end
+    
+    rect rgb(240, 255, 240)
+        Note over App,Disk: Asynchronous I/O (io_uring)
+        App->>Kernel: io_uring_submit() - read request
+        Note over App: Process continues immediately
+        App->>App: Do other work
+        Kernel->>Disk: Issue read
+        Disk-->>Kernel: Data ready
+        Kernel->>Kernel: Complete request
+        App->>Kernel: io_uring_wait() - check completion
+        Kernel-->>App: Data ready
+    end
+    
+    rect rgb(240, 240, 255)
+        Note over App,Disk: Non-Blocking I/O
+        App->>Kernel: read(O_NONBLOCK)
+        Kernel-->>App: EAGAIN (not ready)
+        App->>App: Do other work
+        App->>Kernel: read(O_NONBLOCK)
+        Kernel-->>App: Data returned
+    end

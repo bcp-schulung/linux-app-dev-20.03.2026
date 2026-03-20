@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant Parent as Parent Process
+    participant Kernel
+    participant Child as Child Process
+    
+    Parent->>Kernel: fork()
+    Kernel->>Kernel: Duplicate process
+    Kernel->>Kernel: Copy page tables (COW)
+    Kernel->>Child: Create new process
+    Kernel-->>Parent: Return child PID
+    Kernel-->>Child: Return 0
+    
+    Note over Parent,Child: Both processes now running
+    
+    Parent->>Parent: if (pid > 0) // parent code
+    Child->>Child: if (pid == 0) // child code
+    
+    Child->>Kernel: exec("/bin/ls", args)
+    Kernel->>Kernel: Replace process image
+    Kernel->>Child: Load new program
+    Child->>Child: Execute /bin/ls
+    
+    Child->>Kernel: exit(0)
+    Kernel->>Kernel: Process termination
+    Kernel->>Kernel: Become zombie
+    
+    Parent->>Kernel: wait(&status)
+    Kernel->>Kernel: Reap zombie child
+    Kernel-->>Parent: Return child status
+    
+    rect rgb(240, 255, 240)
+        Note over Parent,Child: Typical Unix process creation pattern
+    end

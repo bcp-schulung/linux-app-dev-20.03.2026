@@ -1,0 +1,34 @@
+graph TB
+    A[Common IPC Pitfalls] --> B[Race Conditions]
+    A --> C[Deadlocks]
+    A --> D[Resource Leaks]
+    A --> E[Signal Safety]
+    
+    B --> B1[Shared memory without locks]
+    B --> B2[TOCTOU bugs]
+    B --> B3[Use semaphores/mutexes]
+    
+    C --> C1[Multiple locks acquired]
+    C --> C2[Circular wait]
+    C --> C3[Always acquire in same order]
+    C --> C4[Use lock timeout]
+    
+    D --> D1[Forgetting sem_unlink]
+    D --> D2[Not closing message queues]
+    D --> D3[Orphaned shared memory]
+    D --> D4[Monitor /dev/shm and /dev/mqueue]
+    
+    E --> E1[printf in signal handler]
+    E --> E2[malloc in signal handler]
+    E --> E3[Only async-signal-safe functions]
+    E --> E4[Set flags check in main loop]
+    
+    F[Debugging Tips] --> F1["ipcs - list IPC objects"]
+    F --> F2["ipcrm - remove IPC objects"]
+    F --> F3["lsof - list open files/sockets"]
+    F --> F4["strace -e ipc - trace IPC calls"]
+    
+    style B fill:#ffe1e1
+    style C fill:#ffe1e1
+    style D fill:#fff4e1
+    style E fill:#ffe1e1

@@ -1,0 +1,32 @@
+sequenceDiagram
+    participant App as Application Code
+    participant Wrapper as glibc Wrapper
+    participant Syscall as System Call
+    participant Kernel as Linux Kernel
+    
+    Note over App: High-level API
+    App->>Wrapper: fopen("file.txt", "r")
+    Note over Wrapper: Buffer management, Error handling, Format conversion
+    Wrapper->>Syscall: open("file.txt", O_RDONLY)
+    Note over Syscall: Set syscall number, Invoke via syscall instruction
+    Syscall->>Kernel: sys_open()
+    Kernel-->>Syscall: fd = 3
+    Syscall-->>Wrapper: 3
+    Note over Wrapper: Allocate FILE struct, Initialize buffer
+    Wrapper-->>App: FILE *stream
+    
+    App->>Wrapper: fprintf(stream, "data")
+    Wrapper->>Wrapper: Fill user buffer
+    Note over Wrapper: Only write to kernel, when buffer full
+    Wrapper->>Syscall: write(3, buf, 4096)
+    Syscall->>Kernel: sys_write()
+    Kernel-->>Syscall: bytes written
+    Syscall-->>Wrapper: 4096
+    Wrapper-->>App: success
+    
+    rect rgb(255, 240, 240)
+        Note over App,Wrapper: User Space
+    end
+    rect rgb(240, 255, 240)
+        Note over Kernel: Kernel Space
+    end

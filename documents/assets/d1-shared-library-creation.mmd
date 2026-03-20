@@ -1,0 +1,21 @@
+flowchart TB
+    A[gcc -shared -fPIC] --> B[Compile with PIC]
+    B --> C[foo.o bar.o baz.o]
+    C --> D[Link into shared library]
+    D --> E[libfoo.so.1.0.0]
+    
+    E --> F{Add SONAME}
+    F -->|Yes| G[gcc -Wl,-soname,libfoo.so.1]
+    F -->|No| H[No version control]
+    
+    G --> I[Create symlinks, ln -s libfoo.so.1.0.0 libfoo.so.1, ln -s libfoo.so.1 libfoo.so]
+    
+    I --> J[Runtime uses SONAME]
+    I --> K[Linker uses .so]
+    
+    J --> L[Library loading]
+    K --> M[Compilation]
+    
+    style E fill:#c8e6c9
+    style G fill:#bbdefb
+    style H fill:#ffccbc

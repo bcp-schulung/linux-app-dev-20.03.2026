@@ -1,0 +1,32 @@
+flowchart TD
+    A[Deadlock Scenario] --> B[Thread 1]
+    A --> C[Thread 2]
+    
+    B --> B1["lock(mutex_A)"]
+    B1 --> B2[Acquired mutex_A]
+    B2 --> B3["lock(mutex_B) - BLOCKS"]
+    
+    C --> C1["lock(mutex_B)"]
+    C1 --> C2[Acquired mutex_B]
+    C2 --> C3["lock(mutex_A) - BLOCKS"]
+    
+    B3 -.Waiting for.-> C2
+    C3 -.Waiting for.-> B2
+    
+    D[DEADLOCK!] --> E[Both threads blocked forever]
+    
+    B3 --> D
+    C3 --> D
+    
+    F[Prevention] --> F1[Always lock in same order]
+    F --> F2[Use pthread_mutex_trylock with timeout]
+    F --> F3[Use lock hierarchies]
+    F --> F4[Avoid nested locks when possible]
+    
+    G[Solution] --> G1["Thread 1: lock A, B, unlock B, A"]
+    G --> G2["Thread 2: lock A, B, unlock B, A"]
+    G2 --> H[Same order - no deadlock]
+    
+    style D fill:#ffe1e1
+    style E fill:#ffe1e1
+    style H fill:#e8f5e8

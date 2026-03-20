@@ -1,0 +1,37 @@
+graph TB
+    A[System Calls] --> B[File Operations]
+    A --> C[Process Control]
+    A --> D[Memory Management]
+    A --> E[Network Operations]
+    A --> F[Device I/O]
+    A --> G[Time & Signals]
+    
+    B --> B1[open, read, write, close]
+    B --> B2[lseek, ioctl, fcntl]
+    B --> B3[stat, chmod, chown]
+    B --> B4[mkdir, rmdir, link]
+    
+    C --> C1[fork, exec, exit, wait]
+    C --> C2[getpid, getppid]
+    C --> C3[kill, signal, sigaction]
+    
+    D --> D1[brk, sbrk, mmap, munmap]
+    D --> D2[mprotect, mlock]
+    D --> D3[madvise]
+    
+    E --> E1[socket, bind, listen]
+    E --> E2[accept, connect]
+    E --> E3[send, recv, sendto, recvfrom]
+    
+    F --> F1[ioctl device control]
+    F --> F2[poll, select, epoll]
+    
+    G --> G1[time, gettimeofday, clock_gettime]
+    G --> G2[alarm, sleep, nanosleep]
+    G --> G3[signal, sigaction, sigprocmask]
+    
+    style A fill:#e1f5ff
+    style B fill:#e8f5e8
+    style C fill:#fff4e1
+    style D fill:#ffe6f0
+    style E fill:#f0f0ff

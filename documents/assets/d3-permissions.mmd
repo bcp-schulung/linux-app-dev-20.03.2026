@@ -1,0 +1,36 @@
+graph TB
+    A[File Permissions] --> B[Owner u]
+    A --> C[Group g]
+    A --> D[Others o]
+    
+    B --> E[rwx]
+    C --> F[r-x]
+    D --> G[r--]
+    
+    E --> H["4+2+1 = 7"]
+    F --> I["4+0+1 = 5"]
+    G --> J["4+0+0 = 4"]
+    
+    H --> K[Mode: 0754]
+    I --> K
+    J --> K
+    
+    L[Special Bits] --> M[setuid 4000]
+    L --> N[setgid 2000]
+    L --> O[sticky 1000]
+    
+    M --> M1[Execute as owner]
+    N --> N1[Execute as group]
+    O --> O1[Only owner can delete /tmp]
+    
+    P[Commands] --> P1["chmod 644 file"]
+    P --> P2["chmod u+x file"]
+    P --> P3["chmod g-w file"]
+    P --> P4["chmod a+r file"]
+    
+    Q[Check Permissions] --> Q1["stat file"]
+    Q --> Q2["ls -l file"]
+    Q --> Q3["access(path, R_OK|W_OK)"]
+    
+    style K fill:#e8f5e8
+    style M1 fill:#ffe1e1

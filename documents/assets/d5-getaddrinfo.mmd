@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant App as Application
+    participant getaddrinfo
+    participant DNS
+    participant Socket
+    
+    App->>getaddrinfo: getaddrinfo("example.com", "80", &hints, &result)
+    Note over getaddrinfo: hints.ai_family = AF_UNSPEC, hints.ai_socktype = SOCK_STREAM
+    
+    getaddrinfo->>DNS: Resolve hostname
+    DNS-->>getaddrinfo: IPv4: 93.184.216.34, IPv6: 2606:2800:220:1:...
+    
+    getaddrinfo-->>App: List of addresses
+    
+    loop Try each address
+        App->>Socket: socket(result->ai_family, result->ai_socktype, ...)
+        Socket-->>App: sockfd
+        
+        App->>Socket: connect(sockfd, result->ai_addr, result->ai_addrlen)
+        alt Success
+            Socket-->>App: Connected
+            Note over App: Use this socket
+        else Failed
+            Socket-->>App: Error
+            App->>App: Try next address
+        end
+    end
+    
+    App->>getaddrinfo: freeaddrinfo(result)
+    
+    rect rgb(240, 255, 240)
+        Note over App,DNS: getaddrinfo handles IPv4/IPv6, automatically - use it!
+    end

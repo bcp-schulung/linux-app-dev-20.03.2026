@@ -1,0 +1,20 @@
+graph LR
+    A[Thread-Local Storage TLS] --> B[Each thread has copy]
+    
+    B --> C["__thread int tls_var"]
+    C --> D[Thread 1 sees its own]
+    C --> E[Thread 2 sees its own]
+    
+    F[Use Cases] --> F1[errno per-thread]
+    F --> F2[Per-thread buffers]
+    F --> F3[Thread-specific state]
+    F --> F4[Avoid locks for read-only data]
+    
+    G[pthread_key_create] --> H[Dynamic TLS]
+    H --> I["pthread_setspecific(key, value)"]
+    I --> J["void *ptr = pthread_getspecific(key)"]
+    
+    K[Comparison] --> L[Global: shared, need locks]
+    K --> M[TLS: private, no locks needed]
+    
+    style M fill:#e8f5e8

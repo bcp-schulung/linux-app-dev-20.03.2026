@@ -1,0 +1,30 @@
+sequenceDiagram
+    participant App
+    participant Kernel
+    participant inotify
+    participant FS as Filesystem
+    
+    App->>Kernel: fd = inotify_init1(0)
+    Kernel-->>App: inotify fd
+    
+    App->>inotify: inotify_add_watch(fd, "/path", IN_MODIFY|IN_CREATE)
+    inotify-->>App: watch descriptor wd
+    
+    Note over App: Application continues...
+    
+    FS->>FS: File modified in /path
+    FS->>inotify: Trigger event
+    
+    App->>inotify: read(fd, buf, sizeof(buf))
+    inotify-->>App: struct inotify_event
+    
+    Note over App: event.wd = watch descriptor, event.mask = IN_MODIFY, event.name = "file.txt"
+    
+    App->>App: Handle event (reprocess file)
+    
+    App->>inotify: inotify_rm_watch(fd, wd)
+    App->>Kernel: close(fd)
+    
+    rect rgb(240, 255, 240)
+        Note over App,FS: Real-time monitoring, No polling needed!
+    end

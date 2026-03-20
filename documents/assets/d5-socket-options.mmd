@@ -1,0 +1,28 @@
+graph TB
+    A[Socket Options] --> B[setsockopt]
+    A --> C[getsockopt]
+    
+    B --> D[SOL_SOCKET level]
+    D --> D1[SO_REUSEADDR - reuse address]
+    D --> D2[SO_REUSEPORT - reuse port]
+    D --> D3[SO_RCVBUF - receive buffer size]
+    D --> D4[SO_SNDBUF - send buffer size]
+    D --> D5[SO_KEEPALIVE - TCP keepalive]
+    D --> D6[SO_LINGER - graceful close]
+    
+    B --> E[IPPROTO_TCP level]
+    E --> E1[TCP_NODELAY - disable Nagle]
+    E --> E2[TCP_CORK - buffer small writes]
+    E --> E3[TCP_KEEPIDLE/KEEPINTVL]
+    
+    F[Common Usage] --> F1["int opt = 1, setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))"]
+    
+    G[SO_REUSEADDR] --> G1[Allows binding immediately after close]
+    G --> G2[Prevents 'Address already in use']
+    
+    H[TCP_NODELAY] --> H1[Disables Nagle algorithm]
+    H --> H2[Reduces latency for small packets]
+    H --> H3[Use for interactive protocols]
+    
+    style G1 fill:#e8f5e8
+    style H1 fill:#e8f5e8

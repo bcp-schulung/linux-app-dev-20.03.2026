@@ -1,0 +1,32 @@
+flowchart TD
+    A[Message Queue Operations] --> B[Create/Open]
+    A --> C[Send]
+    A --> D[Receive]
+    A --> E[Close/Unlink]
+    
+    B --> B1["mqd = mq_open('/myqueue', O_CREAT|O_RDWR, 0644, &attr)"]
+    B1 --> B2["attr.mq_maxmsg = 10"]
+    B1 --> B3["attr.mq_msgsize = 256"]
+    
+    C --> C1["mq_send(mqd, msg, len, priority)"]
+    C1 --> C2[Messages ordered by priority]
+    C2 --> C3[Blocks if queue full]
+    
+    D --> D1["mq_receive(mqd, buf, size, &prio)"]
+    D1 --> D2[Get highest priority message]
+    D2 --> D3[Blocks if queue empty]
+    
+    E --> E1["mq_close(mqd)"]
+    E1 --> E2["mq_unlink('/myqueue')"]
+    
+    F[Advantages] --> F1[Message boundaries preserved]
+    F --> F2[Priority queuing]
+    F --> F3[Non-blocking mode available]
+    F --> F4[Notification mechanisms]
+    
+    G[Use Cases] --> G1[Producer-consumer]
+    G --> G2[Request-response]
+    G --> G3[Event notification]
+    
+    style C2 fill:#e8f5e8
+    style D2 fill:#e1f5ff

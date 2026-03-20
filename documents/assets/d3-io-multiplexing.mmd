@@ -1,0 +1,31 @@
+graph TB
+    A[Monitoring Mechanisms] --> B[select]
+    A --> C[poll]
+    A --> D[epoll]
+    
+    B --> B1["fd_set readfds"]
+    B1 --> B2["FD_SET(fd, &readfds)"]
+    B2 --> B3["select(maxfd+1, &readfds, NULL, NULL, &timeout)"]
+    B3 --> B4[Limited to 1024 fds]
+    B3 --> B5[O n complexity]
+    
+    C --> C1["struct pollfd fds[N]"]
+    C1 --> C2["fds[0].fd = fd1"]
+    C2 --> C3["fds[0].events = POLLIN"]
+    C3 --> C4["poll(fds, N, timeout)"]
+    C4 --> C5[No fd limit]
+    C4 --> C6[O n complexity]
+    
+    D --> D1["epfd = epoll_create1(0)"]
+    D1 --> D2["epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event)"]
+    D2 --> D3["epoll_wait(epfd, events, MAX, timeout)"]
+    D3 --> D4[Scales to 10k+ fds]
+    D3 --> D5[O 1 on ready fds]
+    D3 --> D6[Linux-specific]
+    
+    E[Comparison] --> E1[select: portable legacy]
+    E --> E2[poll: better than select]
+    E --> E3[epoll: best performance Linux]
+    
+    style D fill:#e8f5e8
+    style D5 fill:#d4edda

@@ -1,0 +1,14 @@
+flowchart TB
+    A[Source Code] --> B{Optimization Level}
+    
+    B -->|"-O0"| C[No optimization, Fast compile, Easy debug, Slow execution]
+    B -->|"-O1"| D[Basic optimization, Moderate compile, Debuggable, Better performance]
+    B -->|"-O2"| E[Full optimization, Slower compile, Harder to debug, Good performance]
+    B -->|"-O3"| F[Aggressive optimization, Slow compile, Difficult debug, Best performance]
+    B -->|"-Os"| G[Size optimization, Smaller binary, Good for embedded]
+    
+    style C fill:#ffccbc
+    style D fill:#fff9c4
+    style E fill:#c8e6c9
+    style F fill:#a5d6a7
+    style G fill:#bbdefb

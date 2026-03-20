@@ -1,0 +1,22 @@
+flowchart LR
+    A[strace ./program] --> B[Intercept syscalls]
+    B --> C[Display syscall trace]
+    
+    C --> D[open file.txt, O_RDONLY]
+    D --> E[= 3 - fd returned]
+    E --> F[read 3, buffer, 1024]
+    F --> G[= 512 - bytes read]
+    G --> H[write 1, buffer, 512]
+    H --> I[= 512 - stdout]
+    I --> J[close 3]
+    J --> K[= 0 - success]
+    K --> L[exit_group 0]
+    
+    M[strace options] --> M1[-c: count calls]
+    M --> M2[-T: show time]
+    M --> M3[-e trace=open: filter]
+    M --> M4[-p PID: attach]
+    
+    style C fill:#fff4e1
+    style E fill:#e8f5e8
+    style G fill:#e8f5e8

@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant Main as Main Thread
+    participant pthread as pthread Library
+    participant Thread1 as Worker Thread 1
+    participant Thread2 as Worker Thread 2
+    
+    Main->>pthread: pthread_create(&tid1, NULL, worker, arg1)
+    pthread->>Thread1: Create thread
+    Thread1->>Thread1: worker(arg1) executes
+    
+    Main->>pthread: pthread_create(&tid2, NULL, worker, arg2)
+    pthread->>Thread2: Create thread
+    Thread2->>Thread2: worker(arg2) executes
+    
+    Note over Main,Thread2: All threads share address space
+    
+    Main->>pthread: pthread_join(tid1, &retval1)
+    Note over Main: Blocks until Thread1 exits
+    Thread1->>Thread1: return result1
+    Thread1-->>Main: Joined
+    
+    Main->>pthread: pthread_join(tid2, &retval2)
+    Thread2->>Thread2: return result2
+    Thread2-->>Main: Joined
+    
+    Main->>Main: Continue execution

@@ -1,0 +1,20 @@
+flowchart TB
+    subgraph ELF File Structure
+        A[ELF Header, e_ident, e_type, e_machine]
+        A --> B[Program Headers, Segments for loading]
+        A --> C[Section Headers, Sections for linking]
+        
+        B --> D[.text segment, executable code]
+        B --> E[.data segment, initialized data]
+        B --> F[.bss segment, uninitialized data]
+        
+        C --> G[.symtab, symbol table]
+        C --> H[.strtab, string table]
+        C --> I[.rel/.rela, relocation info]
+        C --> J[.dynamic, dynamic linking info]
+    end
+    
+    style A fill:#bbdefb
+    style D fill:#c8e6c9
+    style E fill:#fff9c4
+    style F fill:#ffccbc

@@ -1,0 +1,35 @@
+graph TB
+    A[Server Architectures] --> B[Iterative Server]
+    A --> C[Concurrent Forking]
+    A --> D[Pre-forked Workers]
+    A --> E[Threaded Server]
+    A --> F[Thread Pool]
+    A --> G[Event-Driven epoll]
+    
+    B --> B1[accept → process → accept]
+    B --> B2[One client at a time]
+    B --> B3[Simple but blocks]
+    
+    C --> C1[accept → fork → child handles]
+    C --> C2[Parallel clients]
+    C --> C3[High overhead]
+    
+    D --> D1[Pre-fork N workers]
+    D --> D2[Workers share accept]
+    D --> D3[Lower fork cost]
+    
+    E --> E1[accept → pthread_create]
+    E --> E2[Lighter than processes]
+    E --> E3[Shared memory issues]
+    
+    F --> F1[Pre-create thread pool]
+    F --> F2[Queue work items]
+    F --> F3[No thread creation overhead]
+    
+    G --> G1[Single-threaded event loop]
+    G --> G2[epoll monitors all clients]
+    G --> G3[Non-blocking I/O]
+    G --> G4[Scales to 10k+ connections]
+    
+    style G fill:#e8f5e8
+    style F fill:#e1f5ff

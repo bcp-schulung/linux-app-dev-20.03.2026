@@ -1,0 +1,32 @@
+flowchart TD
+    A[select/poll/epoll] --> B[select - legacy]
+    A --> C[poll - better]
+    A --> D[epoll- best Linux]
+    
+    B --> B1[fd_set readfds]
+    B1 --> B2["select(maxfd+1, &readfds, NULL, NULL, &timeout)"]
+    B2 --> B3[Returns ready count]
+    B3 --> B4["FD_ISSET(fd, &readfds)"]
+    B --> B5[Limit: 1024 fds]
+    B --> B6[O n complexity]
+    
+    C --> C1["struct pollfd fds[N]"]
+    C1 --> C2["poll(fds, N, timeout)"]
+    C2 --> C3[Check fds[i].revents]
+    C --> C4[No fd limit]
+    C --> C5[O n complexity]
+    
+    D --> D1["epfd = epoll_create1(0)"]
+    D1 --> D2["epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event)"]
+    D2 --> D3["n = epoll_wait(epfd, events, MAX, timeout)"]
+    D3 --> D4[events array filled with ready fds]
+    D --> D5[Scales to 100k+ fds]
+    D --> D6[O 1 on ready fds]
+    D --> D7[Edge-triggered or level-triggered]
+    
+    E[Use Case] --> E1[select: portability small scale]
+    E --> E2[poll: better than select]
+    E --> E3[epoll: high-performance servers]
+    
+    style D fill:#e8f5e8
+    style D6 fill:#d4edda

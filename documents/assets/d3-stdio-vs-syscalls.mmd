@@ -1,0 +1,26 @@
+graph TB
+    subgraph "Standard I/O FILE*"
+        A1[fopen/fread/fwrite/fclose]
+        A2[User Space Buffering]
+        A3[Format Conversion fprintf/fscanf]
+        A4[Portable across systems]
+    end
+    
+    subgraph "System Calls - File Descriptors"
+        B1[open/read/write/close]
+        B2[No buffering direct to kernel]
+        B3[Raw binary data]
+        B4[Full control maximum performance]
+    end
+    
+    A1 -.->|Uses internally| B1
+    A2 -.->|Reduces syscalls| B1
+    
+    C[When to use?]
+    C --> C1[Use FILE* for text formats]
+    C --> C2[Use fd for binary, sockets, devices]
+    C --> C3[Use fd for low-latency I/O]
+    C --> C4[Use FILE* for convenience]
+    
+    style A2 fill:#e8f5e8
+    style B2 fill:#e1f5ff

@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant App as User Application
+    participant Lib as libc
+    participant Kernel as Linux Kernel
+    participant HW as Hardware
+    
+    App->>Lib: write(fd, buf, count)
+    Note over Lib: libc wrapper function
+    Lib->>Lib: Set syscall number (SYS_write)
+    Lib->>Kernel: syscall instruction, (user→kernel mode)
+    Note over Kernel: Context switch, Save user registers
+    Kernel->>Kernel: sys_write() handler
+    Kernel->>HW: Perform I/O operation
+    HW-->>Kernel: Operation complete
+    Kernel->>Kernel: Set return value
+    Note over Kernel: Restore user registers
+    Kernel-->>Lib: Return (kernel→user mode)
+    Lib-->>App: Return bytes written
+    
+    rect rgb(255, 240, 240)
+        Note over App,Lib: User Space (Ring 3)
+    end
+    rect rgb(240, 255, 240)
+        Note over Kernel,HW: Kernel Space (Ring 0)
+    end

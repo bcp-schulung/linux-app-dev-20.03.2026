@@ -1,0 +1,32 @@
+graph LR
+    A[Unix Domain Sockets] --> B[Fast local IPC]
+    A --> C[Socket API familiar]
+    
+    B --> B1["socketpair(AF_UNIX, SOCK_STREAM, 0, sv)"]
+    B1 --> B2["sv[0] and sv[1] connected"]
+    B2 --> B3[Bidirectional]
+    
+    C --> C1["socket(AF_UNIX, SOCK_STREAM, 0)"]
+    C1 --> C2["bind(fd, addr, len)"]
+    C2 --> C3[addr.sun_family = AF_UNIX]
+    C2 --> C4["addr.sun_path = '/tmp/mysock'"]
+    C3 --> C5["listen(fd, backlog)"]
+    C5 --> C6["accept(fd, ...)"]
+    
+    D[Client] --> D1["socket(AF_UNIX, SOCK_STREAM, 0)"]
+    D1 --> D2["connect(fd, addr, len)"]
+    
+    E[Datagram] --> E1[SOCK_DGRAM]
+    E1 --> E2[Unreliable no connection]
+    E1 --> E3[Message boundaries]
+    
+    F[Stream] --> F1[SOCK_STREAM]
+    F1 --> F2[Reliable connection-based]
+    F1 --> F3[Byte stream]
+    
+    G[Advantages] --> G1[Faster than TCP]
+    G --> G2[File permissions for access control]
+    G --> G3[Pass file descriptors!]
+    
+    style B2 fill:#e8f5e8
+    style G3 fill:#d4edda

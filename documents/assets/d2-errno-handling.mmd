@@ -1,0 +1,28 @@
+stateDiagram-v2
+    [*] --> SystemCall: Call open(), read(), etc.
+    SystemCall --> Success: Return >= 0
+    SystemCall --> Error: Return -1
+    
+    Success --> [*]: Use return value
+    
+    Error --> CheckErrno: Set errno
+    CheckErrno --> ENOENT: File not found (2)
+    CheckErrno --> EACCES: Permission denied (13)
+    CheckErrno --> EAGAIN: Try again (11)
+    CheckErrno --> ENOMEM: Out of memory (12)
+    CheckErrno --> EINTR: Interrupted (4)
+    
+    ENOENT --> HandleError: perror() or strerror()
+    EACCES --> HandleError
+    EAGAIN --> Retry: For non-blocking I/O
+    ENOMEM --> HandleError
+    EINTR --> Retry: Resume operation
+    
+    HandleError --> [*]: Cleanup & exit
+    Retry --> SystemCall
+    
+    note right of CheckErrno
+        errno is thread-local
+        Check immediately after error
+        Can be overwritten by next call
+    end note

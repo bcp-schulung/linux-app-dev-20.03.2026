@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant proc as Process
+    participant sem as Semaphore
+    participant res as Shared Resource
+    
+    proc->>sem: sem_open("/mysem", O_CREAT, 0644, 1)
+    Note over sem: Initial value = 1 (unlocked)
+    
+    proc->>sem: sem_wait() // P operation
+    Note over sem: Decrement: 1 → 0, Acquire lock
+    
+    proc->>res: Access shared resource
+    Note over res: Critical section, Only one process at a time
+    
+    proc->>sem: sem_post() // V operation
+    Note over sem: Increment: 0 → 1, Release lock
+    
+    rect rgb(240, 255, 240)
+        Note over proc,res: Other processes blocked in sem_wait, until sem_post releases
+    end
+    
+    proc->>sem: sem_close()
+    proc->>sem: sem_unlink("/mysem")
+    
+    Note over sem: Binary semaphore (0 or 1) = Mutex, Counting semaphore (>1) = Resource pool

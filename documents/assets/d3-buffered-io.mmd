@@ -1,0 +1,31 @@
+flowchart LR
+    A[Process] -->|"write(fd, buf, 8192)"| B[System Call]
+    B --> C[VFS Layer]
+    C --> D[Page Cache]
+    
+    D --> E{Write Mode}
+    E -->|Buffered Write default| F[Copy to page cache]
+    E -->|O_DIRECT| G[Bypass cache]
+    E -->|O_SYNC| H[Write-through]
+    
+    F --> F1[Mark pages dirty]
+    F1 --> F2[Return immediately]
+    F2 --> F3[pdflush writes later]
+    F3 --> I[Block Device]
+    
+    G --> I
+    H --> I
+    
+    I --> J[Disk Write]
+    
+    K[Read Operation] --> L["read(fd, buf, 4096)"]
+    L --> M[Check Page Cache]
+    M --> N{In Cache?}
+    N -->|Yes| O[Return from cache - fast!]
+    N -->|No| P[Read from disk]
+    P --> Q[Populate cache]
+    Q --> R[Return to user]
+    
+    style F fill:#e8f5e8
+    style O fill:#d4edda
+    style P fill:#fff4e1

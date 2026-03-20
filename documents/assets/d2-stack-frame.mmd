@@ -1,0 +1,23 @@
+graph TB
+    subgraph "Stack Growth ↓"
+        A[main Frame] --> B[foo Frame]
+        B --> C[bar Frame]
+        C --> D[baz Frame - Current]
+    end
+    
+    subgraph "Frame Contents"
+        D1[Return Address]
+        D2[Saved Frame Pointer]
+        D3[Local Variables]
+        D4[Function Arguments]
+        D5[Temporary Storage]
+    end
+    
+    D --> D1
+    D1 --> D2
+    D2 --> D3
+    D3 --> D4
+    D4 --> D5
+    
+    style D fill:#ffe1e1
+    style D3 fill:#e8f5e8

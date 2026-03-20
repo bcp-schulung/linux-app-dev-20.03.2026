@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant Kernel
+    participant Loader as ld.so (dynamic loader)
+    participant App as Application
+    participant Lib as Shared Libraries
+    
+    Kernel->>Loader: exec() starts loader first
+    Loader->>Loader: Read executable's .dynamic section
+    Loader->>Loader: Parse DT_NEEDED entries
+    Loader->>Lib: Load required libraries
+    Lib-->>Loader: Libraries mapped into memory
+    Loader->>Loader: Resolve symbols (PLT/GOT)
+    Loader->>Loader: Relocations applied
+    Loader->>App: Jump to entry point
+    App->>App: main() executes
+    
+    Note over Loader,Lib: Search paths:, 1. RPATH/RUNPATH, 2. LD_LIBRARY_PATH, 3. /etc/ld.so.cache, 4. /lib, /usr/lib

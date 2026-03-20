@@ -1,0 +1,17 @@
+flowchart TB
+    A[Source Code, hello.c] --> B[Preprocessor, cpp]
+    B --> C[Preprocessed Source, hello.i]
+    C --> D[Compiler, cc1]
+    D --> E[Assembly Code, hello.s]
+    E --> F[Assembler, as]
+    F --> G[Object File, hello.o]
+    G --> H[Linker, ld]
+    I[Libraries, libc.so] --> H
+    H --> J[Executable, a.out]
+    
+    style A fill:#e1f5ff
+    style J fill:#c8e6c9
+    style B fill:#fff9c4
+    style D fill:#fff9c4
+    style F fill:#fff9c4
+    style H fill:#fff9c4

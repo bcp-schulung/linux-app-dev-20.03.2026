@@ -1,0 +1,17 @@
+flowchart LR
+    A[Working Directory] -->|git add| B[Staging Area]
+    B -->|git commit| C[Local Repository]
+    C -->|git push| D[Remote Repository]
+    
+    D -->|git fetch| C
+    D -->|git pull| A
+    C -->|git checkout| A
+    
+    E[Untracked Files] -.->|git add| B
+    A -->|git diff| B
+    B -->|git diff --cached| C
+    
+    style A fill:#fff9c4
+    style B fill:#ffccbc
+    style C fill:#c8e6c9
+    style D fill:#bbdefb

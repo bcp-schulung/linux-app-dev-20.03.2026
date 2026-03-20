@@ -1,0 +1,28 @@
+flowchart LR
+    subgraph Makefile Anatomy
+        A[Target: prog]
+        B[Prerequisites: main.o utils.o]
+        C[Recipe: gcc -o prog main.o utils.o]
+        
+        A --> B
+        B --> C
+    end
+    
+    subgraph Variables
+        D[CC = gcc]
+        E[CFLAGS = -Wall -O2]
+        F[OBJECTS = main.o utils.o]
+    end
+    
+    subgraph Automatic Variables
+        G[$@: Target name]
+        H[$<: First prerequisite]
+        I[$^: All prerequisites]
+    end
+    
+    D --> A
+    E --> C
+    F --> B
+    
+    style A fill:#bbdefb
+    style C fill:#c8e6c9

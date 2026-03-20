@@ -1,0 +1,26 @@
+flowchart TD
+    A[Memory-Mapped I/O] --> B["fd = open(file)"]
+    B --> C["addr = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0)"]
+    
+    C --> D[Virtual Memory]
+    D --> E[Page Fault on first access]
+    E --> F[Kernel loads pages from disk]
+    F --> G[Direct memory access]
+    
+    G --> H[Modify data in memory]
+    H --> I[Kernel syncs dirty pages]
+    I --> J["msync() - explicit sync"]
+    I --> K["munmap() - cleanup"]
+    
+    L[Benefits] --> L1[No read/write syscalls]
+    L --> L2[Kernel handles paging]
+    L --> L3[Shared memory between processes]
+    L --> L4[Efficient for large files]
+    
+    M[Use Cases] --> M1[Large file processing]
+    M --> M2[Shared memory IPC]
+    M --> M3[Database engines]
+    M --> M4[Device driver communication]
+    
+    style G fill:#e8f5e8
+    style L1 fill:#d4edda

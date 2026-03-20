@@ -1,0 +1,28 @@
+flowchart TD
+    A[Signal Types] --> B[Standard Signals]
+    A --> C[Real-time Signals]
+    
+    B --> B1[SIGINT - Ctrl+C]
+    B --> B2[SIGTERM - Terminate gracefully]
+    B --> B3[SIGKILL - Force kill cannot catch]
+    B --> B4[SIGSEGV - Segmentation fault]
+    B --> B5[SIGPIPE - Broken pipe]
+    B --> B6[SIGCHLD - Child exited]
+    B --> B7[SIGUSR1/SIGUSR2 - User-defined]
+    B --> B8[SIGALRM - Timer alarm]
+    
+    C --> C1[SIGRTMIN to SIGRTMAX]
+    C --> C2[Queued not lost]
+    C --> C3[Can carry data sigqueue]
+    
+    D[Signal Actions] --> E[Default]
+    D --> F[Ignore]
+    D --> G[Custom Handler]
+    
+    E --> E1[Term, Core, Ign, Stop, Cont]
+    F --> F1["signal(SIGPIPE, SIG_IGN)"]
+    G --> G1["sigaction(sig, &act, NULL)"]
+    
+    style B3 fill:#ffe1e1
+    style B4 fill:#ffe1e1
+    style C2 fill:#e8f5e8

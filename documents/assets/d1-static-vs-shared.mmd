@@ -1,0 +1,17 @@
+flowchart LR
+    subgraph Static Linking
+        A1[app.o] --> L1[Linker]
+        B1[libfoo.a] --> L1
+        L1 --> E1[executable, Size: Large, All code included]
+    end
+    
+    subgraph Dynamic Linking
+        A2[app.o] --> L2[Linker]
+        B2[libfoo.so, reference only] -.-> L2
+        L2 --> E2[executable, Size: Small, Runtime dependency]
+        E2 -.Load at runtime.-> R[libfoo.so, Shared in memory]
+    end
+    
+    style E1 fill:#ffcdd2
+    style E2 fill:#c8e6c9
+    style R fill:#b2dfdb

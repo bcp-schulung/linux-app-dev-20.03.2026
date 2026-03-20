@@ -1,0 +1,25 @@
+graph TB
+    subgraph "Process Virtual Address Space (64-bit Linux)"
+        A[0x0000 0000 0000 0000] -->|Program Code| B[Text Segment .text]
+        B -->|Read-Only Data| C[Data Segment .rodata]
+        C -->|Initialized Data| D[Data Segment .data]
+        D -->|Uninitialized Data| E[BSS Segment .bss]
+        E -->|↓ Heap grows up| F[Heap malloc/free]
+        F -->|...| G[Memory Mapping mmap]
+        G -->|...| H[Shared Libraries libc.so]
+        H -->|↑ Stack grows down| I[Stack local vars]
+        I --> J[0x7FFF FFFF FFFF]
+    end
+    
+    subgraph "Physical RAM"
+        K[Page Tables]
+        L[Physical Pages]
+    end
+    
+    F -.->|MMU Translation| L
+    I -.->|MMU Translation| L
+    
+    style B fill:#e1f5ff
+    style F fill:#e8f5e8
+    style I fill:#ffe1e1
+    style K fill:#fff4e1

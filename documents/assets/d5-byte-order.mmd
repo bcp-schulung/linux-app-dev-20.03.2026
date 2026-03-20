@@ -1,0 +1,26 @@
+flowchart TD
+    A[Network Byte Order] --> B[Big-Endian]
+    
+    B --> C[Most significant byte first]
+    C --> D[0x12345678 → 12 34 56 78]
+    
+    E[Host Byte Order] --> F[x86/x64: Little-Endian]
+    F --> G[0x12345678 → 78 56 34 12]
+    
+    H[Conversion Functions] --> I[htons - host to network short]
+    H --> J[htonl - host to network long]
+    H --> K[ntohs - network to host short]
+    H --> L[ntohl - network to host long]
+    
+    M[Usage] --> M1["uint16_t port = htons(8080)"]
+    M --> M2["uint32_t ip = inet_addr('192.168.1.1')"]
+    M --> M3["sockaddr.sin_port = htons(port)"]
+    M --> M4["uint16_t host_port = ntohs(sockaddr.sin_port)"]
+    
+    N[IPv4 vs IPv6] --> O["inet_ntop/inet_pton - both"]
+    N --> P["inet_addr - IPv4 only deprecated"]
+    
+    style I fill:#e8f5e8
+    style J fill:#e8f5e8
+    style K fill:#e8f5e8
+    style L fill:#e8f5e8

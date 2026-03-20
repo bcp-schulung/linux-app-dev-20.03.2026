@@ -1,0 +1,34 @@
+graph TB
+    A[IPC Performance] --> B[Shared Memory fastest]
+    A --> C[Pipes moderate]
+    A --> D[Message Queues moderate]
+    A --> E[Sockets slowest]
+    
+    B --> B1["~1 µs latency"]
+    B --> B2[Direct memory access]
+    B --> B3[Requires manual sync]
+    B --> B4[Best: large data transfers]
+    
+    C --> C1["~10 µs latency"]
+    C --> C2[Kernel buffer copy 2x]
+    C --> C3[Automatic synchronization]
+    C --> C4[Best: streaming data]
+    
+    D --> D1["~15 µs latency"]
+    D --> D2[Message boundaries]
+    D --> D3[Priority support]
+    D --> D4[Best: discrete messages]
+    
+    E --> E1["~50 µs latency"]
+    E --> E2[Network stack overhead]
+    E --> E3[Works over network]
+    E --> E4[Best: distributed systems]
+    
+    F[Complexity] --> F1[Shared Memory: High - need locks]
+    F --> F2[Pipes: Low - simple API]
+    F --> F3[Message Queues: Medium]
+    F --> F4[Sockets: High - protocols]
+    
+    style B fill:#e8f5e8
+    style C fill:#fff4e1
+    style D fill:#e1f5ff

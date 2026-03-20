@@ -1,0 +1,29 @@
+flowchart TD
+    A[Socket API] --> B[socket]
+    B --> C[Server bind]
+    B --> D[Client connect]
+    
+    C --> E[Server listen]
+    E --> F[Server accept - blocks]
+    
+    D --> G[Client connect to server]
+    G -.Connection request.-> F
+    F --> H[accept returns new socket]
+    
+    H --> I[Server recv/send]
+    G --> J[Client send/recv]
+    
+    I -.Data exchange.-> J
+    
+    K[close] --> L[Connection closed]
+    
+    M[TCP SOCK_STREAM] --> M1[Reliable ordered byte stream]
+    M --> M2[Connection-oriented]
+    M --> M3[Three-way handshake]
+    
+    N[UDP SOCK_DGRAM] --> N1[Unreliable unordered datagrams]
+    N --> N2[Connectionless]
+    N --> N3[No handshake]
+    
+    style M fill:#e8f5e8
+    style N fill:#fff4e1

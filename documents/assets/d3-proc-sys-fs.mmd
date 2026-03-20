@@ -1,0 +1,33 @@
+graph LR
+    A[/proc filesystem] --> B[Process Info]
+    A --> C[Kernel Info]
+    A --> D[System Config]
+    
+    B --> B1["/proc/[pid]/cmdline"]
+    B --> B2["/proc/[pid]/status"]
+    B --> B3["/proc/[pid]/fd/ - open files"]
+    B --> B4["/proc/[pid]/maps - memory map"]
+    B --> B5["/proc/[pid]/environ"]
+    B --> B6["/proc/[pid]/cwd - working dir"]
+    
+    C --> C1["/proc/cpuinfo"]
+    C --> C2["/proc/meminfo"]
+    C --> C3["/proc/version"]
+    C --> C4["/proc/loadavg"]
+    C --> C5["/proc/uptime"]
+    
+    D --> D1["/proc/sys/kernel/* - sysctl"]
+    D --> D2["/proc/sys/net/* - network"]
+    D --> D3["/proc/sys/vm/* - memory"]
+    
+    E[/sys filesystem] --> F[Device Info]
+    E --> G[Hardware]
+    E --> H[Drivers]
+    
+    F --> F1["/sys/class/net - network"]
+    F --> F2["/sys/block - disks"]
+    G --> G1["/sys/bus/*"]
+    H --> H1["/sys/module/*"]
+    
+    style A fill:#e1f5ff
+    style E fill:#e8f5e8

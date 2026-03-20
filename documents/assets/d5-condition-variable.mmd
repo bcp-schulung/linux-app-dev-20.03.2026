@@ -1,0 +1,30 @@
+sequenceDiagram
+    participant Consumer as Consumer Thread
+    participant Cond as Condition Variable
+    participant Mutex
+    participant Producer as Producer Thread
+    participant Queue
+    
+    Consumer->>Mutex: pthread_mutex_lock(&mutex)
+    Consumer->>Queue: Check if empty
+    Queue-->>Consumer: Empty
+    
+    Consumer->>Cond: pthread_cond_wait(&cond, &mutex)
+    Note over Consumer: Atomically releases mutex, and waits
+    
+    Producer->>Mutex: pthread_mutex_lock(&mutex)
+    Producer->>Queue: Add item
+    Queue-->>Producer: Item added
+    
+    Producer->>Cond: pthread_cond_signal(&cond)
+    Note over Producer: Wake one waiting thread
+    Producer->>Mutex: pthread_mutex_unlock(&mutex)
+    
+    Note over Consumer: Wakes up, reacquires mutex
+    Consumer->>Queue: Get item
+    Queue-->>Consumer: Item
+    Consumer->>Mutex: pthread_mutex_unlock(&mutex)
+    
+    rect rgb(240, 255, 240)
+        Note over Consumer,Producer: Condition variables coordinate, producer-consumer patterns
+    end

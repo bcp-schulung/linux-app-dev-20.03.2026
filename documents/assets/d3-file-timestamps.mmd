@@ -1,0 +1,33 @@
+graph TB
+    A[File Timestamps] --> B[atime]
+    A --> C[mtime]
+    A --> D[ctime]
+    
+    B --> B1["Access time - read()"]
+    B --> B2[Updated when file read]
+    B --> B3[Can disable: mount -o noatime]
+    B --> B4[Performance: reduces writes]
+    
+    C --> C1["Modification time - write()"]
+    C --> C2[Updated when content changes]
+    C --> C3[Used by make, rsync]
+    
+    D --> D1[Change time - chmod, chown]
+    D --> D2[Metadata changes]
+    D --> D3[Cannot be set manually]
+    D --> D4[Different from mtime!]
+    
+    E[stat syscall] --> E1["struct stat sb"]
+    E1 --> E2["stat(path, &sb)"]
+    E2 --> E3["sb.st_atime"]
+    E2 --> E4["sb.st_mtime"]
+    E2 --> E5["sb.st_ctime"]
+    E2 --> E6["sb.st_size"]
+    E2 --> E7["sb.st_mode"]
+    
+    F[Touch command] --> F1["touch file - update atime/mtime"]
+    F --> F2["touch -a - atime only"]
+    F --> F3["touch -m - mtime only"]
+    
+    style C fill:#e8f5e8
+    style D fill:#fff4e1

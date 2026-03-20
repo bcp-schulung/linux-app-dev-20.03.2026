@@ -1,0 +1,44 @@
+sequenceDiagram
+    participant C as Client
+    participant S1 as SYN
+    participant S2 as SYN-ACK
+    participant S3 as ACK
+    participant Server
+    
+    Note over C,Server: TCP Three-Way Handshake
+    
+    C->>Server: SYN seq=x
+    Note over C: SYN_SENT state
+    Note over Server: SYN_RECEIVED state
+    
+    Server->>C: SYN-ACK seq=y ack=x+1
+    
+    C->>Server: ACK ack=y+1
+    Note over C: ESTABLISHED state
+    Note over Server: ESTABLISHED state
+    
+    rect rgb(240, 255, 240)
+        Note over C,Server: Connection established, Data can flow
+    end
+    
+    C->>Server: Data seq=x+1
+    Server->>C: ACK ack=x+data_len
+    
+    Server->>C: Data seq=y+1
+    C->>Server: ACK ack=y+data_len
+    
+    Note over C,Server: Connection Termination (4-way)
+    
+    C->>Server: FIN seq=x+n
+    Note over C: FIN_WAIT_1
+    
+    Server->>C: ACK ack=x+n+1
+    Note over C: FIN_WAIT_2
+    Note over Server: CLOSE_WAIT
+    
+    Server->>C: FIN seq=y+m
+    Note over Server: LAST_ACK
+    
+    C->>Server: ACK ack=y+m+1
+    Note over C: TIME_WAIT 2MSL
+    Note over Server: CLOSED

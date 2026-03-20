@@ -1,0 +1,29 @@
+flowchart TD
+    A[File Operations] --> B[open]
+    A --> C[read/write]
+    A --> D[lseek]
+    A --> E[close]
+    
+    B --> B1["int fd = open(path, flags, mode)"]
+    B1 --> B2{flags}
+    B2 -->|O_RDONLY| B3[Read only]
+    B2 -->|O_WRONLY| B4[Write only]
+    B2 -->|O_RDWR| B5[Read and write]
+    B2 -->|O_CREAT| B6[Create if not exists]
+    B2 -->|O_APPEND| B7[Append mode]
+    B2 -->|O_TRUNC| B8[Truncate to zero]
+    
+    C --> C1["ssize_t n = read(fd, buf, count)"]
+    C --> C2["ssize_t n = write(fd, buf, count)"]
+    
+    D --> D1["off_t pos = lseek(fd, offset, whence)"]
+    D1 --> D2[SEEK_SET: from beginning]
+    D1 --> D3[SEEK_CUR: from current]
+    D1 --> D4[SEEK_END: from end]
+    
+    E --> E1["int status = close(fd)"]
+    
+    style B fill:#e1f5ff
+    style C fill:#e8f5e8
+    style D fill:#fff4e1
+    style E fill:#ffe1e1

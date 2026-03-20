@@ -1,0 +1,21 @@
+graph TD
+    A[Common Memory Errors] --> B[Buffer Overflow]
+    A --> C[Memory Leak]
+    A --> D[Use After Free]
+    A --> E[Double Free]
+    A --> F[Uninitialized Memory]
+    A --> G[Invalid Free]
+    
+    B --> B1["char buf[10], strcpy(buf, long_string)"]
+    C --> C1["ptr = malloc(100), // never freed"]
+    D --> D1["free(ptr), *ptr = 5 // CRASH"]
+    E --> E1["free(ptr), free(ptr) // CRASH"]
+    F --> F1["int x, if (x == 10) // undefined"]
+    G --> G1["int x = 10, free(&x) // CRASH"]
+    
+    style B fill:#ffe1e1
+    style C fill:#fff4e1
+    style D fill:#ffe1e1
+    style E fill:#ffe1e1
+    style F fill:#fff4e1
+    style G fill:#ffe1e1

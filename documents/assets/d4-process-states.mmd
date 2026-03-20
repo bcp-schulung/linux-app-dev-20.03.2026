@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> Created: fork()
+    Created --> Ready: Scheduler adds to queue
+    Ready --> Running: Scheduled by CPU
+    Running --> Ready: Time slice expired (preemption)
+    Running --> Waiting: I/O operation or wait()
+    Waiting --> Ready: I/O complete or child exited
+    Running --> Zombie: exit() called
+    Zombie --> [*]: Parent calls wait()
+    
+    note right of Zombie
+        Zombie state:
+        - Process terminated
+        - Resources freed
+        - Exit status saved
+        - Waiting for parent to reap
+    end note
+    
+    note right of Running
+        Running state:
+        - Executing on CPU
+        - Has all resources
+        - Can be preempted
+    end note

@@ -1,0 +1,26 @@
+flowchart TD
+    A[Hard Link vs Symbolic Link] --> B[Hard Link]
+    A --> C[Symbolic Link Symlink]
+    
+    B --> B1["ln source.txt hardlink.txt"]
+    B --> B2[Same inode number]
+    B --> B3[Same file, different name]
+    B --> B4[Cannot span filesystems]
+    B --> B5[Cannot link directories]
+    B --> B6[File persists if original deleted]
+    
+    C --> C1["ln -s source.txt symlink.txt"]
+    C --> C2[Different inode]
+    C --> C3[Contains path string]
+    C --> C4[Can span filesystems]
+    C --> C5[Can link directories]
+    C --> C6[Breaks if target deleted dangling]
+    
+    D[Use Cases] --> D1[Hard: backup, deduplication]
+    D --> D2[Sym: shortcuts, paths]
+    
+    E[Link Count] --> E1[Inode tracks links]
+    E --> E2[File deleted when count = 0]
+    
+    style B fill:#e8f5e8
+    style C fill:#e1f5ff

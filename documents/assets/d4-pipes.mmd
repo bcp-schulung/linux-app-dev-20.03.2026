@@ -1,0 +1,27 @@
+flowchart TD
+    A[Pipe IPC] --> B[Unidirectional]
+    A --> C[pipe system call]
+    
+    C --> D["int fd[2], pipe(fd)"]
+    D --> E["fd[0] = read end"]
+    D --> F["fd[1] = write end"]
+    
+    G[Parent] --> H[fork]
+    H --> I[Child]
+    
+    G --> J["close(fd[0]), Keep write end"]
+    I --> K["close(fd[1]), Keep read end"]
+    
+    J --> L["write(fd[1], data, size)"]
+    K --> M["read(fd[0], buf, size)"]
+    
+    L -.Data flow.-> M
+    
+    N[FIFO Named Pipe] --> O["mkfifo(/tmp/mypipe, 0666)"]
+    O --> P[Unrelated processes can open]
+    P --> Q[Process A: open for write]
+    P --> R[Process B: open for read]
+    
+    style L fill:#e8f5e8
+    style M fill:#e1f5ff
+    style O fill:#fff4e1

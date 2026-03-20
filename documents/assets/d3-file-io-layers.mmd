@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant App as Application
+    participant Lib as C Library
+    participant VFS as Virtual File System
+    participant FS as ext4/xfs/...
+    participant Cache as Page Cache
+    participant Disk as Block Device
+    
+    App->>Lib: open("/path/file", O_RDWR)
+    Lib->>VFS: sys_open()
+    VFS->>FS: ext4_open()
+    FS->>VFS: Return inode
+    VFS->>VFS: Allocate file descriptor
+    VFS-->>App: fd = 3
+    
+    App->>Lib: read(fd, buf, 4096)
+    Lib->>VFS: sys_read()
+    VFS->>FS: ext4_file_read_iter()
+    FS->>Cache: Check page cache
+    
+    alt Page in cache
+        Cache-->>FS: Return cached data
+    else Cache miss
+        FS->>Disk: Read blocks
+        Disk-->>FS: Block data
+        FS->>Cache: Update cache
+        Cache-->>FS: Return data
+    end
+    
+    FS-->>VFS: Data
+    VFS-->>App: bytes_read = 4096

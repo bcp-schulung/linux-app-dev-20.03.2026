@@ -1,0 +1,32 @@
+flowchart TD
+    A[Source Code] -->|gcc -fsanitize=address -g| B[Instrumented Binary]
+    B --> C[ASan Runtime Library]
+    
+    C --> D{Memory Operations}
+    D -->|malloc/free| E[Track Allocations]
+    D -->|Load/Store| F[Check Shadow Memory]
+    
+    F --> G{Shadow Byte Valid?}
+    G -->|Yes| H[Allow Access]
+    G -->|No| I[Detect Error]
+    
+    I --> J[Heap buffer overflow]
+    I --> K[Stack buffer overflow]
+    I --> L[Use after free]
+    I --> M[Use after scope]
+    I --> N[Double free]
+    
+    J --> O[Print Stack Trace]
+    K --> O
+    L --> O
+    M --> O
+    N --> O
+    
+    O --> P[Abort Program]
+    
+    style C fill:#fff4e1
+    style I fill:#ffe1e1
+    style O fill:#ffe6e6
+    style H fill:#e8f5e8
+    
+    Q[Shadow Memory] --> Q1["1 byte tracks 8 bytes, 0xFF = valid, 0xFA = left redzone, 0xFD = freed"]

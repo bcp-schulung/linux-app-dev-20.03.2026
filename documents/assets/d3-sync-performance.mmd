@@ -1,0 +1,33 @@
+flowchart LR
+    A[File I/O Performance] --> B[Synchronization]
+    
+    B --> C[fsync fd]
+    B --> D[fdatasync fd]
+    B --> E[sync]
+    
+    C --> C1[Flush file data + metadata]
+    C --> C2[Waits for disk write]
+    C --> C3[Expensive - use sparingly]
+    
+    D --> D1[Flush file data only]
+    D --> D2[Skip timestamp updates]
+    D --> D3[Faster than fsync]
+    
+    E --> E1[Flush all dirty buffers]
+    E --> E2[System-wide]
+    
+    F[O_SYNC flag] --> F1[Every write() waits for disk]
+    F --> F2[Slow but durable]
+    
+    G[O_DIRECT flag] --> G1[Bypass page cache]
+    G --> G2[Databases use this]
+    G --> G3[Must align to block size]
+    
+    H[Performance Tips] --> H1[Batch writes before fsync]
+    H --> H2[Use fdatasync when possible]
+    H --> H3[Consider data loss risk]
+    H --> H4[Profile before optimizing]
+    
+    style C fill:#ffe1e1
+    style D fill:#fff4e1
+    style G1 fill:#e1f5ff

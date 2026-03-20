@@ -1,0 +1,28 @@
+flowchart TD
+    A[File System Traversal] --> B["opendir(path)"]
+    B --> C[DIR *dirp]
+    
+    C --> D["readdir(dirp)"]
+    D --> E["struct dirent *entry"]
+    
+    E --> F[entry->d_name - filename]
+    E --> G[entry->d_ino - inode number]
+    E --> G[entry->d_type - DT_REG/DT_DIR/...]
+    
+    D --> H{More entries?}
+    H -->|Yes| D
+    H -->|No| I[NULL returned]
+    
+    I --> J["closedir(dirp)"]
+    
+    K[Recursive Traversal] --> L[Check d_type]
+    L --> M{DT_DIR?}
+    M -->|Yes| N[opendir recursively]
+    M -->|No| O[Process regular file]
+    
+    P[Filter Entries] --> P1[Skip . and ..]
+    P --> P2[Pattern matching glob]
+    P --> P3[Check permissions]
+    
+    style E fill:#e8f5e8
+    style M fill:#fff4e1

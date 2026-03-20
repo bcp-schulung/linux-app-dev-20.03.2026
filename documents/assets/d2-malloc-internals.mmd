@@ -1,0 +1,31 @@
+graph TD
+    A[glibc malloc] --> B[ptmalloc2 allocator]
+    B --> C{Allocation Strategy}
+    
+    C -->|Small < 512 bytes| D[Fast Bins]
+    C -->|Medium < 128KB| E[Small/Large Bins]
+    C -->|Huge >= 128KB| F[mmap direct]
+    
+    D --> D1[LIFO single-linked list]
+    D --> D2[No coalescing]
+    D --> D3[Very fast]
+    
+    E --> E1[Doubly-linked lists]
+    E --> E2[Sorted by size]
+    E --> E3[Coalescing enabled]
+    E --> E4[Best-fit or first-fit]
+    
+    F --> F1[Direct kernel allocation]
+    F --> F2[Separate from main heap]
+    F --> F3[Immediately returned to OS on free]
+    
+    G[Arenas] --> G1[Per-thread heaps]
+    G --> G2[Reduce contention]
+    G --> G3[Up to 8*cores on 64-bit]
+    
+    B -.-> G
+    
+    style D fill:#e8f5e8
+    style E fill:#fff4e1
+    style F fill:#e1f5ff
+    style G fill:#ffe6f0

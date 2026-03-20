@@ -1,0 +1,35 @@
+graph TB
+    A[Common Socket Errors] --> B[EADDRINUSE]
+    A --> C[ECONNREFUSED]
+    A --> D[ETIMEDOUT]
+    A --> E[EPIPE]
+    A --> F[EWOULDBLOCK/EAGAIN]
+    
+    B --> B1[Address already in use]
+    B --> B2[Another process bound to port]
+    B --> B3[Solution: SO_REUSEADDR]
+    B --> B4[Wait TIME_WAIT timeout]
+    
+    C --> C1[Connection refused]
+    C --> C2[No server listening]
+    C --> C3[Check server running]
+    C --> C4[Check firewall]
+    
+    D --> D1[Connection timed out]
+    D --> D2[Network unreachable]
+    D --> D3[Retry with backoff]
+    
+    E --> E1[Broken pipe]
+    E --> E2[Write to closed socket]
+    E --> E3[Ignore SIGPIPE]
+    E --> E4[Check send return value]
+    
+    F --> F1[Non-blocking operation would block]
+    F --> F2[Not an error]
+    F --> F3[Try again later]
+    F --> F4[Use select/epoll]
+    
+    style B fill:#fff4e1
+    style C fill:#ffe1e1
+    style E fill:#ffe1e1
+    style F fill:#e8f5e8

@@ -1,0 +1,36 @@
+graph LR
+    subgraph "Inode Structure"
+        A[Inode Number] --> B[Metadata]
+        B --> C[File Type]
+        B --> D[Permissions]
+        B --> E[Owner/Group]
+        B --> F[Timestamps]
+        B --> G[Size]
+        B --> H[Link Count]
+        B --> I[Block Pointers]
+    end
+    
+    subgraph "Data Blocks"
+        I --> J[Direct Blocks 0-11]
+        I --> K[Indirect Block]
+        I --> L[Double Indirect]
+        I --> M[Triple Indirect]
+        
+        J --> J1[Data Block 1]
+        J --> J2[Data Block 2]
+        J --> J3[...]
+        
+        K --> K1[Pointers]
+        K1 --> K2[Data Blocks]
+        
+        L --> L1[Ptr to Ptrs]
+        L1 --> L2[Ptrs]
+        L2 --> L3[Data]
+    end
+    
+    N[Directory Entry] --> N1["name → inode#"]
+    N1 --> A
+    
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style I fill:#e8f5e8

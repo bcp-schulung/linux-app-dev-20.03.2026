@@ -1,0 +1,19 @@
+flowchart TB
+    A[Position Independent, Code -fPIC] --> B{Why needed?}
+    B --> C[Shared library can be, loaded at any address]
+    B --> D[Multiple processes share, same physical memory]
+    
+    C --> E[Code relocation, handled by linker]
+    D --> F[Memory efficiency]
+    
+    G[Without -fPIC] --> H[Absolute addresses, hardcoded]
+    H --> I[Each process needs, separate copy]
+    I --> J[Wasted memory]
+    
+    E --> K[GOT for data, PLT for functions]
+    K --> L[Single shared copy]
+    L --> M[Many processes]
+    
+    style F fill:#c8e6c9
+    style L fill:#c8e6c9
+    style J fill:#ef9a9a

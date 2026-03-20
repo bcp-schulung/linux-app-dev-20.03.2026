@@ -1,0 +1,34 @@
+graph LR
+    subgraph "Stack Segment"
+        S1[Function Frames]
+        S2[Local Variables]
+        S3[Return Addresses]
+        S4[Grows Downward ↓]
+    end
+    
+    subgraph "Heap Segment"
+        H1[Dynamic Allocations]
+        H2[malloc/free managed]
+        H3[Grows Upward ↑]
+    end
+    
+    subgraph "Data Segments"
+        D1[.data - initialized globals]
+        D2[.bss - zero initialized]
+        D3[.rodata - constants]
+    end
+    
+    subgraph "Text Segment"
+        T1[Executable Code]
+        T2[Read-Only]
+        T3[Shared Among Instances]
+    end
+    
+    T1 --> D1
+    D1 --> H1
+    H1 -.->|Gap| S1
+    
+    style S1 fill:#ffe1e1
+    style H1 fill:#e8f5e8
+    style D1 fill:#fff4e1
+    style T1 fill:#e1f5ff

@@ -1,0 +1,37 @@
+sequenceDiagram
+    participant P1 as Process 1
+    participant K as Kernel
+    participant P2 as Process 2
+    
+    P1->>K: open("data.txt", O_RDWR)
+    K-->>P1: fd1 = 3
+    
+    P2->>K: open("data.txt", O_RDWR)
+    K-->>P2: fd2 = 3
+    
+    Note over P1,P2: Both have independent file descriptors
+    
+    P1->>K: fcntl(fd1, F_SETLK, WRITE_LOCK, bytes 0-99)
+    K->>K: Grant write lock
+    K-->>P1: Success
+    
+    P2->>K: fcntl(fd2, F_SETLK, WRITE_LOCK, bytes 0-99)
+    K->>K: Check lock table
+    K-->>P2: EAGAIN (would block)
+    
+    Note over P2: Process 2 retries or uses F_SETLKW to wait
+    
+    P2->>K: fcntl(fd2, F_SETLKW, WRITE_LOCK, bytes 0-99)
+    Note over P2: Blocks waiting for lock
+    
+    P1->>K: write(fd1, buffer, 100)
+    K-->>P1: Written
+    
+    P1->>K: fcntl(fd1, F_SETLK, UNLOCK, bytes 0-99)
+    K->>K: Release lock
+    K->>P2: Wake up blocked process
+    K-->>P1: Success
+    K-->>P2: Lock granted
+    
+    P2->>K: write(fd2, buffer, 100)
+    K-->>P2: Written

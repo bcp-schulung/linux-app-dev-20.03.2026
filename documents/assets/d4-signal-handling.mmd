@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant Proc as Process
+    participant Kernel
+    participant Handler as Signal Handler
+    
+    Proc->>Kernel: sigaction(SIGINT, &act, NULL)
+    Note over Kernel: Register handler
+    
+    Proc->>Proc: Normal execution
+    
+    Note over Kernel: User presses Ctrl+C
+    Kernel->>Kernel: Generate SIGINT
+    Kernel->>Proc: Deliver signal (interrupt execution)
+    
+    Note over Proc: Save context
+    Proc->>Handler: Call handler function
+    Handler->>Handler: signal_handler(int sig)
+    Handler->>Handler: Set flag / cleanup
+    Handler-->>Proc: Return
+    Note over Proc: Restore context
+    
+    Proc->>Proc: Check flag in main loop
+    Proc->>Proc: if (quit_flag) cleanup & exit
+    
+    rect rgb(255, 240, 240)
+        Note over Proc,Handler: Async-signal-safe functions only:, write(), _exit(), sigprocmask()
+    end
+    
+    rect rgb(240, 255, 240)
+        Note over Proc,Handler: NOT safe: printf, malloc, etc.
+    end

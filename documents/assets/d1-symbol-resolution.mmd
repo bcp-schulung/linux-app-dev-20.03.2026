@@ -1,0 +1,20 @@
+flowchart TB
+    A[Program calls printf] --> B{Symbol defined, in executable?}
+    B -->|Yes| C[Use local definition]
+    B -->|No| D[Check PLT/GOT]
+    
+    D --> E{First call?}
+    E -->|Yes| F[PLT stub calls, dynamic linker]
+    E -->|No| G[Jump to cached, address in GOT]
+    
+    F --> H[Linker searches libraries]
+    H --> I{Symbol found?}
+    I -->|Yes| J[Update GOT entry]
+    I -->|No| K[Symbol not found error]
+    
+    J --> L[Execute function]
+    G --> L
+    K --> M[Program crashes]
+    
+    style L fill:#c8e6c9
+    style M fill:#ef9a9a

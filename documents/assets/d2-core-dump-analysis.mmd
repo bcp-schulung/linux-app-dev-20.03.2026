@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant P as Program
+    participant OS as Linux Kernel
+    participant FS as Filesystem
+    participant GDB as GDB Debugger
+    
+    P->>P: Segmentation Fault
+    P->>OS: Signal SIGSEGV
+    OS->>OS: Check ulimit -c
+    alt Core dumps enabled
+        OS->>FS: Write core file
+        FS-->>OS: core.1234
+        Note over FS: Snapshot of process memory, Registers, stack, heap
+    else Core dumps disabled
+        OS->>P: Terminate
+        Note over OS: No core file written
+    end
+    
+    GDB->>FS: gdb program core.1234
+    FS-->>GDB: Load symbols & memory
+    GDB->>GDB: bt (backtrace)
+    Note over GDB: Examine crash location, Inspect variables

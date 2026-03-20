@@ -1,0 +1,24 @@
+graph TD
+    A[Memory Leak Patterns] --> B[Lost Pointer]
+    A --> C[Failure to Free]
+    A --> D[Circular References]
+    A --> E[Resource Leaks]
+    
+    B --> B1["ptr = malloc(100), ptr = malloc(200) // leak!, // First block unreachable"]
+    
+    C --> C1["void func() {,   char *p = malloc(100),   if (error) return // leak!,   free(p), }"]
+    
+    D --> D1["struct node {,   struct node *next, }, A→B→A circular // leak"]
+    
+    E --> E1["fd = open(file), // forgot close(fd), Socket not closed, pthread not joined"]
+    
+    F[Detection Tools] --> F1[Valgrind memcheck]
+    F --> F2[AddressSanitizer -fsanitize=address]
+    F --> F3[LeakSanitizer]
+    F --> F4[mtrace glibc built-in]
+    
+    style B fill:#ffe1e1
+    style C fill:#ffe1e1
+    style D fill:#fff4e1
+    style E fill:#fff4e1
+    style F1 fill:#e8f5e8

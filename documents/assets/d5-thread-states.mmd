@@ -1,0 +1,36 @@
+stateDiagram-v2
+    [*] --> Created: pthread_create()
+    
+    Created --> Ready: Scheduled by kernel
+    
+    Ready --> Running: Assigned to CPU
+    
+    Running --> Ready: Preempted (time slice expired)
+    Running --> Waiting: Blocked on I/O, mutex, cond var
+    Running --> Terminated: return from thread function
+    
+    Waiting --> Ready: Resource available, mutex unlocked
+    
+    Terminated --> [*]: pthread_join() or detached
+    
+    note right of Created
+        New thread created
+        Not yet scheduled
+    end note
+    
+    note right of Running
+        Executing on CPU
+        Can be preempted
+    end note
+    
+    note right of Waiting
+        Blocked:
+        - pthread_mutex_lock() waiting
+        - pthread_cond_wait() waiting
+        - read()/write() blocking I/O
+    end note
+    
+    note right of Terminated
+        Zombie until joined
+        or created detached
+    end note

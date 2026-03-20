@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant T1 as Thread 1
+    participant Mutex
+    participant T2 as Thread 2
+    participant Resource as Shared Resource
+    
+    T1->>Mutex: pthread_mutex_lock(&mutex)
+    Mutex->>Mutex: Acquire lock
+    Mutex-->>T1: Lock acquired
+    
+    T2->>Mutex: pthread_mutex_lock(&mutex)
+    Note over T2: Blocks waiting for lock
+    
+    T1->>Resource: Read/modify shared data
+    Resource-->>T1: Data
+    T1->>Resource: Write shared data
+    
+    T1->>Mutex: pthread_mutex_unlock(&mutex)
+    Mutex->>Mutex: Release lock
+    Mutex-->>T2: Wake up T2
+    Mutex-->>T2: Lock acquired
+    
+    T2->>Resource: Read/modify shared data
+    T2->>Mutex: pthread_mutex_unlock(&mutex)
+    
+    rect rgb(240, 255, 240)
+        Note over T1,Resource: Mutual exclusion ensures, only one thread in critical section
+    end

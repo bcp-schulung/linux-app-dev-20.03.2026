@@ -1,0 +1,27 @@
+flowchart TB
+    A[Link time: gcc -lfoo] --> B{Search for libfoo.so}
+    B --> C[Check -L paths]
+    C --> D{Found?}
+    D -->|Yes| E[Link OK]
+    D -->|No| F[Check standard paths]
+    F --> G[/usr/lib, /usr/local/lib, /lib]
+    G --> H{Found?}
+    H -->|Yes| E
+    H -->|No| I[Error: cannot find -lfoo]
+    
+    J[Runtime: ./prog] --> K{Load libfoo.so}
+    K --> L[Check RPATH/RUNPATH]
+    L --> M{Found?}
+    M -->|Yes| N[Load library]
+    M -->|No| O[Check LD_LIBRARY_PATH]
+    O --> P{Found?}
+    P -->|Yes| N
+    P -->|No| Q[Check /etc/ld.so.cache]
+    Q --> R{Found?}
+    R -->|Yes| N
+    R -->|No| S[Error: cannot open shared object]
+    
+    style E fill:#c8e6c9
+    style N fill:#c8e6c9
+    style I fill:#ef9a9a
+    style S fill:#ef9a9a

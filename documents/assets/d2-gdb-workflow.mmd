@@ -1,0 +1,15 @@
+flowchart TD
+    A[Source Code] -->|Compile with -g| B[Binary with Debug Symbols]
+    B -->|gdb ./program| C[GDB Session]
+    C -->|break main| D[Set Breakpoint]
+    D -->|run| E[Execute Until Breakpoint]
+    E -->|step/next| F[Step Through Code]
+    F -->|print var| G[Inspect Variables]
+    G -->|backtrace| H[View Stack Trace]
+    H -->|continue| I[Resume Execution]
+    I -->|Crash/Exit| J[Post-Mortem Analysis]
+    J -->|quit| K[End Session]
+    
+    style B fill:#e1f5ff
+    style C fill:#fff4e1
+    style G fill:#e8f5e8

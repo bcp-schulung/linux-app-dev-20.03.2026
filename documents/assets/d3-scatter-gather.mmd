@@ -1,0 +1,27 @@
+flowchart TD
+    A[Scatter/Gather I/O] --> B[readv/writev]
+    
+    B --> C["struct iovec iov[3]"]
+    C --> C1["iov[0].iov_base = buf1"]
+    C --> C2["iov[0].iov_len = 100"]
+    C --> C3["iov[1].iov_base = buf2"]
+    C --> C4["iov[1].iov_len = 200"]
+    C --> C5["iov[2].iov_base = buf3"]
+    C --> C6["iov[2].iov_len = 150"]
+    
+    C --> D["ssize_t n = writev(fd, iov, 3)"]
+    D --> E[Single System Call]
+    E --> F[Writes 450 bytes total]
+    
+    G[Traditional Approach] --> G1["write(fd, buf1, 100)"]
+    G1 --> G2["write(fd, buf2, 200)"]
+    G2 --> G3["write(fd, buf3, 150)"]
+    G3 --> H[Three System Calls - slow!]
+    
+    I[Benefits] --> I1[Fewer context switches]
+    I --> I2[Atomic writes of scatter data]
+    I --> I3[Better performance]
+    
+    style E fill:#e8f5e8
+    style F fill:#d4edda
+    style H fill:#ffe1e1

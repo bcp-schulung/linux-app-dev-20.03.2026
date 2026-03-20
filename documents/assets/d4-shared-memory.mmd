@@ -1,0 +1,25 @@
+flowchart LR
+    A[Shared Memory Setup] --> B[Process A: shm_open]
+    B --> C["fd = shm_open('/myshm', O_CREAT|O_RDWR, 0666)"]
+    C --> D["ftruncate(fd, SIZE)"]
+    D --> E["ptr = mmap(NULL, SIZE, PROT_RW, MAP_SHARED, fd, 0)"]
+    
+    F[Process B: shm_open] --> G["fd = shm_open('/myshm', O_RDWR, 0)"]
+    G --> H["ptr = mmap(NULL, SIZE, PROT_RW, MAP_SHARED, fd, 0)"]
+    
+    E --> I[Both processes share memory region]
+    H --> I
+    
+    I --> J[Process A writes]
+    J --> K[Process B reads - instant!]
+    
+    L[Cleanup] --> M["munmap(ptr, SIZE)"]
+    M --> N["shm_unlink('/myshm')"]
+    
+    O[Synchronization] --> P[Use semaphores]
+    O --> Q[Use mutexes pthread_mutex]
+    O --> R[Use atomic operations]
+    
+    style I fill:#e8f5e8
+    style K fill:#d4edda
+    style O fill:#fff4e1

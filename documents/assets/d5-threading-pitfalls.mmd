@@ -1,0 +1,33 @@
+graph TB
+    A[Common Threading Pitfalls] --> B[Race Conditions]
+    A --> C[Deadlocks]
+    A --> D[Forgotten pthread_join]
+    A --> E[Non-thread-safe functions]
+    
+    B --> B1[Shared variable without lock]
+    B --> B2[counter++ not atomic]
+    B --> B3[Solution: mutex or atomic]
+    
+    C --> C1[Lock ordering issue]
+    C --> C2[Both threads wait forever]
+    C --> C3[Solution: consistent lock order]
+    
+    D --> D1[Memory leaks]
+    D --> D2[Thread resources not freed]
+    D --> D3[Solution: join or detach]
+    
+    E --> E1[strtok, asctime, localtime]
+    E --> E2[Use _r variants]
+    E --> E3[strtok_r, localtime_r, etc]
+    
+    F[Data Races] --> F1[Use thread sanitizer]
+    F --> F2["gcc -fsanitize=thread"]
+    
+    G[Performance Issues] --> G1[Too much locking]
+    G --> G2[False sharing]
+    G --> G3[Excessive context switches]
+    
+    style B fill:#ffe1e1
+    style C fill:#ffe1e1
+    style D fill:#fff4e1
+    style E fill:#fff4e1

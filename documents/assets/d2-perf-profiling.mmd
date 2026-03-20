@@ -1,0 +1,28 @@
+flowchart TD
+    A[Compile with symbols] -->|gcc -g -O2| B[Binary]
+    B -->|perf record ./program| C[perf.data]
+    
+    C --> D{Analysis Type}
+    D -->|perf report| E[Function Hotspots]
+    D -->|perf annotate| F[Line-by-line]
+    D -->|perf script| G[Raw events]
+    D -->|perf flamegraph| H[Flame Graph]
+    
+    E --> I[Top consuming functions]
+    F --> J[Assembly with costs]
+    G --> K[FlameGraph.pl]
+    K --> H
+    
+    H --> L[Interactive visualization]
+    I --> M[Optimization targets]
+    J --> M
+    L --> M
+    
+    N[perf stat] --> N1[Overall statistics]
+    N1 --> N2[Cache misses]
+    N1 --> N3[Branch predictions]
+    N1 --> N4[Instructions per cycle]
+    
+    style M fill:#e8f5e8
+    style C fill:#fff4e1
+    style H fill:#e1f5ff

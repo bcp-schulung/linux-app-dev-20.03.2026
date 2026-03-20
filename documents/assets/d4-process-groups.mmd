@@ -1,0 +1,28 @@
+graph TB
+    A[Process Groups & Sessions] --> B[Process Group]
+    A --> C[Session]
+    
+    B --> B1[Group of related processes]
+    B --> B2[Process Group ID PGID]
+    B --> B3["setpgid(pid, pgid)"]
+    B --> B4[Used for job control]
+    
+    C --> C1[Collection of process groups]
+    C --> C2[Session ID SID]
+    C --> C3["setsid() - create new session"]
+    C --> C4[Controlling terminal]
+    
+    D[Example Shell Job] --> D1[Shell PGID=100, SID=100]
+    D1 --> D2["ls | grep foo | wc"]
+    D2 --> D3[All in same PGID=200]
+    D3 --> D4[Ctrl+C sends SIGINT to group]
+    
+    E[Daemon Process] --> E1["fork() + exit parent"]
+    E1 --> E2["setsid() - new session"]
+    E2 --> E3["Close stdin/stdout/stderr"]
+    E3 --> E4["chdir(/) - root dir"]
+    E4 --> E5["umask(0) - reset perms"]
+    E5 --> E6[No controlling terminal]
+    
+    style C3 fill:#e8f5e8
+    style E2 fill:#e1f5ff

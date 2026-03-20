@@ -1,0 +1,20 @@
+flowchart TB
+    A[make all] --> B{prog, up to date?}
+    B -->|No| C[Check dependencies]
+    B -->|Yes| D[Done]
+    
+    C --> E{main.o, newer than main.c?}
+    E -->|No| F[gcc -c main.c]
+    E -->|Yes| G[Skip compilation]
+    
+    F --> H{All .o files ready?}
+    G --> H
+    
+    H -->|Yes| I[gcc -o prog *.o]
+    H -->|No| J[Compile remaining .c files]
+    
+    J --> H
+    I --> K[prog created/updated]
+    
+    style K fill:#c8e6c9
+    style D fill:#fff9c4

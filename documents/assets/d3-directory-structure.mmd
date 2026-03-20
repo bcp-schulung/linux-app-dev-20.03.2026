@@ -1,0 +1,32 @@
+flowchart TD
+    A[Directory Entry] -->|Contains| B[Filename: report.txt]
+    B --> C["Inode #: 12345"]
+    
+    C --> D[Inode 12345]
+    D --> E[Metadata]
+    E --> E1[Type: regular file]
+    E --> E2[Size: 8192 bytes]
+    E --> E3[Permissions: 0644]
+    E --> E4[Owner: user:group]
+    E --> E5[Timestamps: atime, mtime, ctime]
+    E --> E6[Links: 1]
+    
+    D --> F[Block Pointers]
+    F --> F1[Direct 0: Block 5000]
+    F --> F2[Direct 1: Block 5001]
+    F --> F3[Direct 2: -]
+    F --> F4[Indirect: -]
+    
+    F1 --> G1[Data: First 4KB]
+    F2 --> G2[Data: Second 4KB]
+    
+    H[Hard Link] --> H1["report_backup.txt → 12345"]
+    H1 -.->|Same inode!| D
+    
+    I[Symbolic Link] --> I1["shortcut.txt → /path/to/report.txt"]
+    I1 -.->|Different inode| J[Inode 99999]
+    J --> K["Content: string '/path/to/report.txt'"]
+    
+    style D fill:#e8f5e8
+    style F1 fill:#e1f5ff
+    style F2 fill:#e1f5ff

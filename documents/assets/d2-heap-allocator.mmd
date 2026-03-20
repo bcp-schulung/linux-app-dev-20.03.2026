@@ -1,0 +1,28 @@
+flowchart TD
+    A[malloc request] --> B{Size < 128KB?}
+    B -->|Yes| C[Use existing arena]
+    B -->|No| D[mmap large block]
+    
+    C --> E{Free chunk available?}
+    E -->|Yes| F[Use free chunk]
+    E -->|No| G[Request more from kernel]
+    
+    G --> H[brk/sbrk syscall]
+    H --> I[Expand heap]
+    I --> F
+    
+    F --> J[Return pointer]
+    D --> K[Return mmap pointer]
+    
+    L[free pointer] --> M{Was mmap'd?}
+    M -->|Yes| N[munmap syscall]
+    M -->|No| O[Add to free list]
+    
+    O --> P{Adjacent free chunks?}
+    P -->|Yes| Q[Coalesce chunks]
+    P -->|No| R[Mark as free]
+    Q --> R
+    
+    style F fill:#e8f5e8
+    style O fill:#fff4e1
+    style D fill:#e1f5ff

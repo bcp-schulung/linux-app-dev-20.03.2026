@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant User
+    participant gcc
+    participant cpp as cpp (preprocessor)
+    participant cc1 as cc1 (compiler)
+    participant as as as (assembler)
+    participant ld as ld (linker)
+    
+    User->>gcc: gcc -o prog main.c
+    gcc->>cpp: Process #include & #define
+    cpp-->>gcc: Expanded source (.i)
+    gcc->>cc1: Parse & compile to assembly
+    cc1-->>gcc: Assembly code (.s)
+    gcc->>as: Assemble to machine code
+    as-->>gcc: Object file (.o)
+    gcc->>ld: Link with libraries
+    ld-->>gcc: Executable binary
+    gcc-->>User: prog (executable)

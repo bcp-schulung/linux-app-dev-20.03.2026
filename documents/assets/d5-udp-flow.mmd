@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant Client1
+    participant Server
+    participant Client2
+    
+    Server->>Server: socket(AF_INET, SOCK_DGRAM, 0)
+    Server->>Server: bind(sockfd, port)
+    Note over Server: Listening for datagrams
+    
+    Client1->>Client1: socket(AF_INET, SOCK_DGRAM, 0)
+    Client2->>Client2: socket(AF_INET, SOCK_DGRAM, 0)
+    
+    Client1->>Server: sendto(sockfd, data, ..., server_addr)
+    Note over Client1,Server: No connection setup!
+    
+    Server->>Server: recvfrom(sockfd, buf, ..., &client_addr)
+    Note over Server: Gets data + client address
+    
+    Server->>Client1: sendto(sockfd, reply, ..., client_addr)
+    
+    Client2->>Server: sendto(sockfd, data, ..., server_addr)
+    Server->>Server: recvfrom(sockfd, buf, ...)
+    Server->>Client2: sendto(sockfd, reply, ...)
+    
+    rect rgb(255, 240, 240)
+        Note over Client1,Server: UDP: No handshake, Packets may be lost or reordered, Fast but unreliable
+    end

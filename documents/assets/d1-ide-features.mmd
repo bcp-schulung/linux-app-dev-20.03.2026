@@ -1,0 +1,33 @@
+flowchart TB
+    subgraph IDE Features
+        A[Code Editor] --> B[Syntax Highlighting]
+        A --> C[Auto-completion]
+        A --> D[Refactoring Tools]
+    end
+    
+    subgraph Build Integration
+        E[Build System] --> F[Makefile/CMake]
+        E --> G[Error Navigation]
+        E --> H[Parallel Build]
+    end
+    
+    subgraph Debugging
+        I[GDB Integration] --> J[Breakpoints]
+        I --> K[Variable Inspection]
+        I --> L[Step Through Code]
+    end
+    
+    subgraph Version Control
+        M[Git Integration] --> N[Commit/Push]
+        M --> O[Diff View]
+        M --> P[Branch Management]
+    end
+    
+    A --> E
+    E --> I
+    I --> M
+    
+    style A fill:#bbdefb
+    style E fill:#c8e6c9
+    style I fill:#fff9c4
+    style M fill:#ffccbc

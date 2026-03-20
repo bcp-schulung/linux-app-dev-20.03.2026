@@ -1,0 +1,20 @@
+flowchart TB
+    A[Compile Time] --> B{Library Type?}
+    B -->|Static .a| C[Copy code into executable]
+    B -->|Shared .so| D[Store reference only]
+    
+    C --> E[Large executable, No runtime dependency]
+    D --> F[Small executable]
+    
+    F --> G[Runtime]
+    G --> H[Dynamic Linker ld.so]
+    H --> I{Find library?}
+    I -->|Found| J[Load & link .so]
+    I -->|Not Found| K[Error: cannot open, shared object file]
+    
+    J --> L[Program runs]
+    K --> M[Program fails]
+    
+    style E fill:#ffccbc
+    style L fill:#c8e6c9
+    style M fill:#ef9a9a

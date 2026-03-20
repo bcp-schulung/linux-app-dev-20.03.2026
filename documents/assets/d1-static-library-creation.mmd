@@ -1,0 +1,19 @@
+flowchart LR
+    A[ar cr libfoo.a] --> B[Create archive]
+    B --> C[Add object files]
+    B --> D[Create symbol table]
+    
+    C --> E[foo.o]
+    C --> F[bar.o]
+    C --> G[baz.o]
+    
+    D --> H[ranlib libfoo.a, or ar s libfoo.a]
+    
+    I[Application] --> J[gcc app.c -L. -lfoo]
+    J --> K[Linker extracts needed, objects from archive]
+    K --> L[Copies into executable]
+    
+    style L fill:#c8e6c9
+    style E fill:#fff9c4
+    style F fill:#fff9c4
+    style G fill:#fff9c4

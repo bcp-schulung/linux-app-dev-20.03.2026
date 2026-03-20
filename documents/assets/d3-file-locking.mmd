@@ -1,0 +1,33 @@
+graph TD
+    A[File Locking Types] --> B[Advisory Locks]
+    A --> C[Mandatory Locks]
+    
+    B --> B1[flock - whole file]
+    B --> B2[fcntl - byte-range]
+    B --> B3[Cooperative only]
+    B --> B4[Processes must check]
+    
+    C --> C1[Enforced by kernel]
+    C --> C2[Rarely used]
+    C --> C3[Security concerns]
+    
+    D[flock Example] --> D1["flock(fd, LOCK_EX) - exclusive"]
+    D --> D2["flock(fd, LOCK_SH) - shared"]
+    D --> D3["flock(fd, LOCK_UN) - unlock"]
+    D --> D4[Whole file only]
+    
+    E[fcntl Example] --> E1["struct flock fl"]
+    E1 --> E2[l_type: F_RDLCK / F_WRLCK]
+    E1 --> E3[l_start: offset]
+    E1 --> E4[l_len: length 0=EOF]
+    E1 --> E5["fcntl(fd, F_SETLK, &fl)"]
+    
+    F[Lock Compatibility] --> F1[Shared + Shared = OK]
+    F --> F2[Shared + Exclusive = BLOCK]
+    F --> F3[Exclusive + Any = BLOCK]
+    
+    style B fill:#e8f5e8
+    style C fill:#ffe1e1
+    style F1 fill:#d4edda
+    style F2 fill:#fff4e1
+    style F3 fill:#ffe1e1

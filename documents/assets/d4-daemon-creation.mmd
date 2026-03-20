@@ -1,0 +1,30 @@
+flowchart TD
+    A[Daemon Creation] --> B["fork()"]
+    B --> C{PID == 0?}
+    C -->|Parent| D["exit(0) - terminate parent"]
+    C -->|Child| E["setsid() - new session"]
+    
+    E --> F[Become session leader]
+    F --> G["fork() again"]
+    G --> H{PID == 0?}
+    H -->|Parent| I["exit(0) - prevent TTY reacquire"]
+    H -->|Child| J[Final daemon process]
+    
+    J --> K["chdir('/') - safe working dir"]
+    K --> L["umask(0) - reset file perms"]
+    L --> M["close(STDIN_FILENO)"]
+    M --> N["close(STDOUT_FILENO)"]
+    N --> O["close(STDERR_FILENO)"]
+    
+    O --> P["open('/dev/null', O_RDWR) - new fd 0"]
+    P --> Q["dup(0) - fd 1"]
+    Q --> R["dup(0) - fd 2"]
+    
+    R --> S[Daemon running]
+    S --> T["openlog('daemon', LOG_PID, LOG_DAEMON)"]
+    T --> U["syslog(LOG_INFO, 'Started')"]
+    
+    V[Main Loop] --> W["while(1) { work() }"]
+    
+    style J fill:#e8f5e8
+    style S fill:#d4edda

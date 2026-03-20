@@ -1,0 +1,30 @@
+flowchart LR
+    A[Zombie Process] --> B[Child calls exit]
+    B --> C[Kernel frees resources]
+    C --> D[Saves exit status]
+    D --> E[Becomes zombie Z]
+    
+    E --> F{Parent calls wait?}
+    F -->|Yes| G[Parent reaps zombie]
+    G --> H[Exit status retrieved]
+    H --> I[Process fully terminated]
+    
+    F -->|No| J[Zombie persists]
+    J --> K[Parent exits]
+    K --> L[init PID 1 adopts]
+    L --> M[init reaps zombie]
+    M --> I
+    
+    N[Orphan Process] --> O[Parent exits first]
+    O --> P[Child still running]
+    P --> Q[init PID 1 adopts]
+    Q --> R[Child runs normally]
+    R --> S[Child exits]
+    S --> T[init reaps immediately]
+    
+    U[Checking] --> V["ps aux | grep -w Z"]
+    V --> W["PID USER STAT Z defunct"]
+    
+    style E fill:#fff4e1
+    style J fill:#ffe1e1
+    style Q fill:#e8f5e8

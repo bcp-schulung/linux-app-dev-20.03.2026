@@ -1,0 +1,33 @@
+flowchart TD
+    A[Thread Synchronization Patterns] --> B[Producer-Consumer]
+    A --> C[Reader-Writer]
+    A --> D[Barrier]
+    A --> E[Thread Pool]
+    
+    B --> B1[Queue + Mutex + Cond Var]
+    B --> B2[Producer adds items]
+    B --> B3[Consumer waits for items]
+    B --> B4[Signal on item added]
+    
+    C --> C1[Multiple readers OR one writer]
+    C --> C2[pthread_rwlock_t]
+    C --> C3[rdlock: shared access]
+    C --> C4[wrlock: exclusive access]
+    
+    D --> D1[Rendezvous point]
+    D --> D2[pthread_barrier_wait]
+    D --> D3[All threads wait]
+    D --> D4[Continue when all arrive]
+    
+    E --> E1[Fixed number of workers]
+    E --> E2[Work queue]
+    E --> E3[Tasks distributed]
+    E --> E4[No thread creation overhead]
+    
+    F[Atomic Operations] --> F1[__atomic_add_fetch]
+    F --> F2[__atomic_compare_exchange]
+    F --> F3[Lock-free algorithms]
+    
+    style B fill:#e8f5e8
+    style E fill:#e1f5ff
+    style F fill:#d4edda

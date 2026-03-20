@@ -1,0 +1,27 @@
+graph LR
+    subgraph Execution Control
+        A1[run/r] --> A2[Start program]
+        B1[continue/c] --> B2[Resume execution]
+        C1[step/s] --> C2[Step into functions]
+        D1[next/n] --> D2[Step over functions]
+        E1[finish] --> E2[Run until return]
+    end
+    
+    subgraph Breakpoints
+        F1[break/b] --> F2[Set breakpoint]
+        G1[info break] --> G2[List breakpoints]
+        H1[delete] --> H2[Remove breakpoint]
+        I1[disable/enable] --> I2[Toggle breakpoint]
+    end
+    
+    subgraph Inspection
+        J1[print/p] --> J2[Show variable]
+        K1[display] --> K2[Auto-show variable]
+        L1[backtrace/bt] --> L2[Call stack]
+        M1[info locals] --> M2[Local variables]
+        N1[x] --> N2[Examine memory]
+    end
+    
+    style A1 fill:#ffe1e1
+    style F1 fill:#e1f5ff
+    style J1 fill:#e8f5e8

@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant CPU
+    participant MMU as Memory Management Unit
+    participant Kernel
+    participant Disk
+    
+    CPU->>MMU: Access address 0x12345000
+    MMU->>MMU: Look up page table entry
+    alt Page present in RAM
+        MMU->>CPU: Return physical address
+        Note over CPU: Access succeeds
+    else Page not present (minor fault)
+        MMU->>Kernel: Page Fault Exception
+        Note over Kernel: Page in memory but not mapped
+        Kernel->>Kernel: Update page table
+        Kernel-->>CPU: Resume execution
+        CPU->>MMU: Retry access
+        MMU->>CPU: Return physical address
+    else Page swapped out (major fault)
+        MMU->>Kernel: Page Fault Exception
+        Kernel->>Disk: Read page from swap
+        Disk-->>Kernel: Page data
+        Kernel->>Kernel: Allocate physical frame
+        Kernel->>Kernel: Update page table
+        Kernel-->>CPU: Resume execution
+        CPU->>MMU: Retry access
+        MMU->>CPU: Return physical address
+    else Invalid access (segmentation fault)
+        MMU->>Kernel: Page Fault Exception
+        Kernel->>Kernel: Check permissions
+        Kernel->>CPU: Send SIGSEGV signal
+        Note over CPU: Process terminated
+    end

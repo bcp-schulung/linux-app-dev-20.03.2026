@@ -1,0 +1,34 @@
+flowchart TD
+    A[exec Family] --> B["execl(path, arg0, arg1, ..., NULL)"]
+    A --> C["execlp(file, arg0, ..., NULL) - search PATH"]
+    A --> D["execle(path, arg0, ..., NULL, envp)"]
+    A --> E["execv(path, argv)"]
+    A --> F["execvp(file, argv) - search PATH"]
+    A --> G["execve(path, argv, envp) - syscall"]
+    
+    B --> H[List args]
+    C --> H
+    D --> H
+    E --> I[Vector args]
+    F --> I
+    G --> I
+    
+    D --> J[Custom environment]
+    G --> J
+    
+    C --> K[Search PATH]
+    F --> K
+    
+    L[Effect of exec] --> M[Replace process image]
+    M --> N[Code replaced]
+    M --> O[Data replaced]
+    M --> P[Stack replaced]
+    M --> Q[Heap replaced]
+    
+    R[Preserved] --> S[PID]
+    R --> T[Open file descriptors unless O_CLOEXEC]
+    R --> U[Working directory]
+    R --> V[Signal masks]
+    
+    style G fill:#e8f5e8
+    style M fill:#fff4e1

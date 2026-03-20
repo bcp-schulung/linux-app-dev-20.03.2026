@@ -1,0 +1,20 @@
+flowchart LR
+    A[Source Code] -->|gcc -g -O0| B[Debug Binary]
+    B -->|valgrind --leak-check=full| C[Valgrind Framework]
+    C --> D{Tool Selection}
+    D -->|memcheck| E[Memory Errors]
+    D -->|cachegrind| F[Cache Profiling]
+    D -->|helgrind| G[Thread Errors]
+    D -->|massif| H[Heap Profiling]
+    
+    E --> E1[Invalid reads/writes]
+    E --> E2[Use after free]
+    E --> E3[Memory leaks]
+    E --> E4[Uninitialized values]
+    
+    style C fill:#fff4e1
+    style E fill:#ffe1e1
+    style E1 fill:#ffe6e6
+    style E2 fill:#ffe6e6
+    style E3 fill:#ffe6e6
+    style E4 fill:#ffe6e6

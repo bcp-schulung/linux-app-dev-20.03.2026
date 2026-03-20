@@ -1,0 +1,18 @@
+flowchart TB
+    A[Configure, ./configure] --> B[Detect system, features]
+    B --> C[Generate Makefiles]
+    
+    C --> D[Build, make]
+    D --> E[Compile sources]
+    E --> F[Link binaries]
+    
+    F --> G[Test, make check]
+    G --> H{Tests pass?}
+    H -->|Yes| I[Install, make install]
+    H -->|No| J[Fix bugs]
+    
+    I --> K[Copy to system dirs, /usr/local/bin, /usr/local/lib]
+    J --> D
+    
+    style K fill:#c8e6c9
+    style J fill:#ffccbc

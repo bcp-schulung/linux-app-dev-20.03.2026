@@ -1,0 +1,21 @@
+flowchart TB
+    A[Source File, main.c] --> B{#include?}
+    B -->|Yes| C[Insert header contents]
+    B -->|No| D{#define?}
+    
+    C --> D
+    D -->|Yes| E[Expand macros]
+    D -->|No| F{#ifdef/#ifndef?}
+    
+    E --> F
+    F -->|Yes| G[Conditional compilation]
+    F -->|No| H[Output preprocessed file]
+    
+    G --> H
+    H --> I[main.i, Ready for compiler]
+    
+    J[#include &lt;stdio.h&gt;] -.-> C
+    K[#define MAX 100] -.-> E
+    L[#ifdef DEBUG] -.-> G
+    
+    style I fill:#c8e6c9

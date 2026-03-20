@@ -1,0 +1,40 @@
+graph TB
+    A[IPC Mechanisms] --> B[Pipes]
+    A --> C[FIFOs]
+    A --> D[Message Queues]
+    A --> E[Shared Memory]
+    A --> F[Semaphores]
+    A --> G[Sockets]
+    A --> H[Signals]
+    
+    B --> B1[Anonymous, parent-child only]
+    B --> B2[Unidirectional byte stream]
+    B --> B3[pipe system call]
+    
+    C --> C1[Named pipes in filesystem]
+    C -->C2[Unrelated processes]
+    C --> C3[mkfifo command/syscall]
+    
+    D --> D1[Message-based POSIX]
+    D --> D2[mq_open, mq_send, mq_receive]
+    D --> D3[Priority queues]
+    
+    E --> E1[Fastest IPC]
+    E --> E2[shmget/shm_open + mmap]
+    E --> E3[Requires synchronization]
+    
+    F --> F1[Synchronization primitive]
+    F --> F2[sem_open, sem_wait, sem_post]
+    F --> F3[Used with shared memory]
+    
+    G --> G1[Network or local Unix sockets]
+    G --> G2[socket, bind, connect]
+    G --> G3[Bidirectional]
+    
+    H --> H1[Asynchronous notifications]
+    H --> H2[kill, signal, sigaction]
+    H --> H3[Limited data transfer]
+    
+    style E fill:#e8f5e8
+    style G fill:#e1f5ff
+    style D fill:#fff4e1

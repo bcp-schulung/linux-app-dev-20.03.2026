@@ -1,0 +1,33 @@
+flowchart TD
+    A[Process Creation Patterns] --> B[Simple Fork-Exec]
+    A --> C[Server Forking]
+    A --> D[Pre-forking]
+    A --> E[Worker Pool]
+    
+    B --> B1["pid = fork()"]
+    B1 --> B2{if pid == 0}
+    B2 -->|Child| B3["exec('/bin/program', ...)"]
+    B2 -->|Parent| B4["wait(&status)"]
+    
+    C --> C1[Server listens]
+    C1 --> C2[Accept connection]
+    C2 --> C3["fork() for each client"]
+    C3 --> C4[Child handles request]
+    C4 --> C5[Child exits]
+    C5 --> C2
+    
+    D --> D1[Pre-fork N workers]
+    D1 --> D2[Workers accept from shared socket]
+    D2 --> D3[No fork overhead per request]
+    
+    E --> E1[Create worker processes]
+    E1 --> E2[Use IPC for task distribution]
+    E2 --> E3[Workers persist]
+    
+    F[Trade-offs] --> F1[Fork-exec: Simple isolation]
+    F --> F2[Server forking: Easy but costly]
+    F --> F3[Pre-forking: Best for high load]
+    F --> F4[Worker pool: Complex, flexible]
+    
+    style D3 fill:#e8f5e8
+    style E3 fill:#e8f5e8

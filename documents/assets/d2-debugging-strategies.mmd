@@ -1,0 +1,36 @@
+graph LR
+    A[Bug Reported] --> B{Can Reproduce?}
+    B -->|Yes| C[Minimize Test Case]
+    B -->|No| D[Add Logging]
+    
+    C --> E{Obvious Cause?}
+    E -->|Yes| F[Fix & Test]
+    E -->|No| G[Choose Debug Tool]
+    
+    G --> H[printf debugging]
+    G --> I[GDB breakpoints]
+    G --> J[Valgrind memory]
+    G --> K[strace syscalls]
+    G --> L[Core dump analysis]
+    
+    H --> M[Isolate Problem]
+    I --> M
+    J --> M
+    K --> M
+    L --> M
+    
+    M --> N[Understand Root Cause]
+    N --> O[Implement Fix]
+    O --> P[Write Test]
+    P --> Q[Verify Fix]
+    
+    D --> R[Reproduce with logs]
+    R --> C
+    
+    Q --> S{Fixed?}
+    S -->|Yes| T[Done]
+    S -->|No| G
+    
+    style M fill:#fff4e1
+    style N fill:#e8f5e8
+    style T fill:#d4edda
