@@ -1,81 +1,15 @@
-Dune
-Foundation
-Neuromancer
-Snow Crash
-The Hitchhiker's Guide to the Galaxy
-1984
-Brave New World
-The Lord of the Rings
-The Hobbit
-Ender's Game
-The Pragmatic Programmer
-The Martian
-Ready Player One
-Do Androids Dream of Electric Sheep?
-The Left Hand of Darkness
-A Fire Upon the Deep
-Rendezvous with Rama
-The Name of the Wind
-A Wizard of Earthsea
-The Way of Kings
-Childhood's End
-I, Robot
-The Moon is a Harsh Mistress
-Stranger in a Strange Land
-Fahrenheit 451
-Slaughterhouse-Five
-The Stars My Destination
-Flow My Tears, the Policeman Said
-Ubik
-The Man in the High Castle
-Ringworld
-The Dispossessed
-The Word for World is Forest
-The Demolished Man
-More Than Human
-The Time Machine
-War of the Worlds
-Flowers for Algernon
-A Canticle for Leibowitz
-The Caves of Steel
-Gateway
-Hyperion
-The Fall of Hyperion
-Endymion
-The Rise of Endymion
-Old Man's War
-The Forever War
-Spin
-Blindsight
-Accelerando
-Rainbows End
-The Diamond Age
-The Windup Girl
-Revelation Space
-Blindsight
-A Memory Called Empire
-Children of Time
-Project Hail Mary
-The Expanse
-Leviathan Wakes
-Caliban's War
-Abaddon's Gate
-Cibola Burn
-Nemesis Games
-Babylon's Ashes
-Persepolis Rising
-Tiamat's Wrath
-The Poppy War
-Mistborn
-The Final Empire
-The Well of Ascension
-The Hero of Ages
-Words of Radiance
-Oathbringer
-Rhythm of War
-The Blade Itself
-Before They Are Hanged
-Last Argument of Kings
-American Gods
-Good Omens
-The Colour of Magic
+apple
+banana
+cherry
+date
+fig
+grape
+kiwi
+lemon
+mango
+nectarine
+orange
+pear
+quince
+raspberry
+strawberry
